@@ -1,10 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MallDomain.entity.common.response {
+    public class Result {
+        public int Code { get; set; }
+        public Object? Data { get; set; }
+        public string? Message { get; set; }
 
-namespace MallDomain.entity.common.response {
-    internal class Result {
+    }
+
+    enum ResultCode {
+        ERROR = 500,
+
+        SUCCESS = 200,
+
+        UNLOGIN = 416
     }
 }

@@ -8,13 +8,11 @@
 
   <ItemGroup>
     <Folder Include="entity\common\request\" />
-    <Folder Include="entity\common\response\" />
-    <Folder Include="entity\mall\request\" />
-    <Folder Include="entity\mall\response\" />
     <Folder Include="entity\mannage\request\" />
     <Folder Include="entity\mannage\response\" />
-    <Folder Include="service\" />
+    <Folder Include="repository\mannage\" />
     <Folder Include="event\" />
+    <Folder Include="service\mannage\" />
   </ItemGroup>
 
   <ItemGroup>

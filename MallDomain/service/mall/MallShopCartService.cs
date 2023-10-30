@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MallDomain.repository {
-     interface IManageRepository {
+namespace MallDomain.service.mall {
+    public class MallShopCartService {
+
+
     }
 }
