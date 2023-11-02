@@ -19,13 +19,14 @@ namespace MallApi.Controllers {
         [HttpGet]
         public IActionResult GetToken() {
             try {
-                
+
 
                 //定义许多种的声明Claim,信息存储部分,Claims的实体一般包含用户和一些元数据
-               var claims = new Claim[]
-                {
+                var claims = new Claim[]
+                 {
                 new Claim(JwtClaimTypes.Id,"1"),
                 new Claim(JwtClaimTypes.Name,"i3yuan"),
+                new Claim(JwtClaimTypes.Role,"Admin"),
                 };
                 //notBefore  生效时间
                 var nbf = DateTime.UtcNow;
@@ -33,13 +34,13 @@ namespace MallApi.Controllers {
                 var Exp = DateTime.UtcNow.AddSeconds(1000);
                      
                 //signingCredentials  签名凭证
-                var iss = configuration["TokenParameters:iss"];  //发行人
-                var aud = configuration["TokenParameters:aud"];       //受众人
-                var sign = configuration["TokenParameters:sign"]; //SecurityKey 的长度必须 大于等于 16个字符
+                var iss = configuration["AdminToken:iss"];  //发行人
+                var aud = configuration["AdminToken:aud"];       //受众人
+                var sign = configuration["AdminToken:sign"]; //SecurityKey 的长度必须 大于等于 16个字符
                 var secret = Encoding.UTF8.GetBytes(sign);
                 SymmetricSecurityKey? key = new SymmetricSecurityKey(secret);
                 SigningCredentials? signcreds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                JwtSecurityToken? jwt = new JwtSecurityToken(issuer: iss, audience: aud, claims: claims, notBefore: nbf, expires: Exp, signingCredentials: signcreds);
+                JwtSecurityToken? jwt = new JwtSecurityToken( iss,  aud, claims,  nbf, expires: Exp, signingCredentials: signcreds);
                 JwtSecurityTokenHandler? JwtHander = new JwtSecurityTokenHandler();
                 string? token = JwtHander.WriteToken(jwt);
                 return Ok(new {

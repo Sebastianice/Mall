@@ -10,9 +10,8 @@ namespace MallDomain.service.mall {
         public Task UpdateMallCartItem(string token, UpdateCartItemParam req);
 
         public Task DeleteMallCartItem(string token, int id);
-        public Task<List<CartItemResponse>> GetCartItemsForSettle(string token, int[] cartItemIds);
+        public Task<List<CartItemResponse>> GetCartItemsForSettle(string token, List<long> cartItemIds);
 
-        // 购物车数据转换
-        Task<List<CartItemResponse>> getMallShoppingCartItemVOS(MallShoppingCartItem[] cartItems);
+      
     }
 }

@@ -9,7 +9,7 @@ namespace MallApi.filter {
 
             if(!context.ExceptionHandled) {
                 context.Result = new ContentResult() {
-                    StatusCode = 200,
+                    StatusCode = 500,
                     ContentType = "application/json;charset=utf-8",
                     Content= JsonConvert.SerializeObject(Result.FailWithMessage(context.Exception.Message))
                 };

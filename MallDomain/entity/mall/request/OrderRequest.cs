@@ -11,7 +11,7 @@
         public int PageNumber { get; set; }
     }
     public class SaveOrderParam {
-        public int[]? CartItemIds { get; set; }
+        public List<long>? CartItemIds { get; set; }
 
         public int AddressId { get; set; }
     }

@@ -2,7 +2,7 @@
     public enum GoodsStatusEnum {
         GOODS_DEFAULT = -9,//错误
 
-        GOODS_UNDER = 0//已下架
+        GOODS_UNDER = 1//已下架
     }
 
     public static class GoodsStatusEnumExtension {

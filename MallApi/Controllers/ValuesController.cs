@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace MallApi.Controllers {
     [Route("api/v")]
     [ApiController]
-    [Authorize]
+    [Authorize(policy:"AdminPolicy")]
     public class ValuesController : ControllerBase {
         // GET: api/<ValuesController>
         [HttpGet]
         public IEnumerable<string> Get() {
-            return new string[] { "value1", "value2" };
+          var authorization =  Request.Headers["Authorization"].ToString();
+            var token = authorization[7..];
+            return new string[] { token };
         }
 
         // GET api/<ValuesController>/5

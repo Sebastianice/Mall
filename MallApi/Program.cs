@@ -46,13 +46,38 @@ builder.Services.AddScoped<IMallIndexInfoService, MallIndexInfoService>();
 builder.Services.AddScoped<IMallOrderService, MallOrderService>();
 builder.Services.AddScoped<IMallUserService, MallUserService>();
 builder.Services.AddSingleton<JwtSecurityTokenHandler>();
-var Issurer = builder.Configuration["TokenParameters:iss"];  //发行人
-var Audience = builder.Configuration["TokenParameters:aud"];       //受众人
-var secretCredentials = builder.Configuration["TokenParameters:sign"];
+builder.Services.AddScoped<IMallShopCartService, MallShopCartService>();
+builder.Services.AddScoped<IMallUserAddressService,MallUserAddressService>();
+
+
+
 builder.Services.AddAuthentication(x => {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(o => {
+}).AddJwtBearer("UserScheme", o => {
+    var Issurer = builder.Configuration["UserToken:iss"];  //发行人
+    var Audience = builder.Configuration["UserToken:aud"];       //受众人
+    var secretCredentials = builder.Configuration["UserToken:sign"];
+    o.TokenValidationParameters = new TokenValidationParameters {
+
+        //是否验证发行人
+        ValidateIssuer = true,
+        ValidIssuer = Issurer,//发行人
+                              //是否验证受众人
+        ValidateAudience = true,
+        ValidAudience = Audience,//受众人
+                                 //是否验证密钥
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretCredentials)),
+
+        ValidateLifetime = true, //验证生命周期
+        RequireExpirationTime = true, //过期时间
+    };
+}).AddJwtBearer("AdminScheme", o => {
+
+    var Issurer = builder.Configuration["AdminToken:iss"];  //发行人
+    var Audience = builder.Configuration["AdminToken:aud"];       //受众人
+    var secretCredentials = builder.Configuration["AdminToken:sign"];
     o.TokenValidationParameters = new TokenValidationParameters {
         //是否验证发行人
         ValidateIssuer = true,
@@ -67,8 +92,21 @@ builder.Services.AddAuthentication(x => {
         ValidateLifetime = true, //验证生命周期
         RequireExpirationTime = true, //过期时间
     };
+
 });
 
+builder.Services.AddAuthorization(builder => {
+    builder.AddPolicy("UserPolicy", p => {
+        
+        p.AddAuthenticationSchemes("UserScheme");
+        p.RequireRole("User");
+      
+    });
+    builder.AddPolicy("AdminPolicy", p => {
+        p.AddAuthenticationSchemes("AdminScheme");
+         p.RequireRole("Admin");
+    });
+});
 
 builder.Services.AddDbContext<MallContext>(p => {
  

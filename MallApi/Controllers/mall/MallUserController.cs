@@ -58,6 +58,8 @@ namespace MallApi.Controllers.mall {
             if (!vr.IsValid) {
                 return Result.FailWithMessage(vr.Errors.ToString()!);
             }
+
+
            var mallUserToken= await mallUserService.UserLogin(userLoginParam);
             return Result.OkWithDetailed(mallUserToken,"登录成功");
         }
