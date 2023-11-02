@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace MallInfrastructure {
@@ -14,6 +9,6 @@ namespace MallInfrastructure {
             var version = new MySqlServerVersion(new Version(8, 1, 0));
             opt.UseMySql(con, version);
             return new MallContext(opt.Options);
-                }
+        }
     }
 }

@@ -7,15 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="entity\common\request\" />
-    <Folder Include="entity\mannage\request\" />
-    <Folder Include="entity\mannage\response\" />
-    <Folder Include="repository\mannage\" />
     <Folder Include="event\" />
     <Folder Include="service\mannage\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.8.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.13" />
   </ItemGroup>
 

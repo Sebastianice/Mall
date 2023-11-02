@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "Fut3t1+mKY9wpC90A9h/5QKQjOtgVxpf72om1/aPNR4UoruaRq03m+GO/8f4Mvnt8eZCku7Ego0mUoA8IB5LaA==",
+  "dgSpecHash": "fUuyOGBiXCT5FhKqOfSwx+HHmuUsjhVhms5zyWMoPdyuAHqBAL68x+MgXIB3CuhXiSJckmgrc6Eo4DvneJ/tsQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Sebastian\\Desktop\\CodeRepo\\Mall\\MallDomain\\MallDomain.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Sebastian\\.nuget\\packages\\fluentvalidation\\11.8.0\\fluentvalidation.11.8.0.nupkg.sha512",
     "C:\\Users\\Sebastian\\.nuget\\packages\\microsoft.entityframeworkcore\\7.0.13\\microsoft.entityframeworkcore.7.0.13.nupkg.sha512",
     "C:\\Users\\Sebastian\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\7.0.13\\microsoft.entityframeworkcore.abstractions.7.0.13.nupkg.sha512",
     "C:\\Users\\Sebastian\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\7.0.13\\microsoft.entityframeworkcore.analyzers.7.0.13.nupkg.sha512",

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MallDomain.entity.mall.response {
+﻿namespace MallDomain.entity.mall.response {
     public class MallOrderResponse {
 
-    public  long OrderId { get; set; }
-       public string?  OrderNo { get; set; }
+        public long OrderId { get; set; }
+        public string? OrderNo { get; set; }
 
         public int TotalPrice { get; set; }
 
@@ -21,10 +15,10 @@ namespace MallDomain.entity.mall.response {
     }
     public class NewBeeMallOrderItemVO {
         public long GoodsId { get; set; }
-        public int GoodsCount{ get; set; }
-        public string? GoodsName{ get; set; }
-      
-      
+        public int GoodsCount { get; set; }
+        public string? GoodsName { get; set; }
+
+
         public string? GoodsCoverImg { get; set; }
         public int SellingPrice { get; set; }
 

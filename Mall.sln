@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MallDomain", "MallDomain\Ma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MallInfrastructure", "MallInfrastructure\MallInfrastructure.csproj", "{51A0A065-3B37-41D3-A13E-DF1132977D80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MallApi", "MallApi\MallApi.csproj", "{EFFA913A-49F2-4C20-BCD5-DD774FCEB98E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MallApi", "MallApi\MallApi.csproj", "{EFFA913A-49F2-4C20-BCD5-DD774FCEB98E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

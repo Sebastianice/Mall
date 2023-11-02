@@ -1,36 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using MallDomain.entity.common.response;
+using MallDomain.service.mall;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MallApi.Controllers.mall {
-    [Route("api/v1/[controller]")]
+
+
+    [Route("api/v1")]
     [ApiController]
     public class MallGoodsCategoryController : ControllerBase {
-        // GET: api/<MallGoodsCategoryController>
-        [HttpGet]
-        public IEnumerable<string> Get() {
-            return new string[] { "value1", "value2" };
+
+        private readonly IMallGoodsCategoryService mallGoodsCategoryService;
+        public MallGoodsCategoryController(IMallGoodsCategoryService mallGoodsCategoryService) {
+            this.mallGoodsCategoryService = mallGoodsCategoryService;
         }
 
-        // GET api/<MallGoodsCategoryController>/5
-        [HttpGet("{id}")]
-        public string Get(int id) {
-            return "value";
+        [HttpGet("categories")]
+        public async Task<Result> GetGoodsCategory() {
+            var list = await mallGoodsCategoryService.GetCategoriesForIndex();
+            if (list.Count <= 0) {
+                return Result.FailWithMessage("查询失败");
+            }
+            return Result.OkWithData(list);
         }
 
-        // POST api/<MallGoodsCategoryController>
-        [HttpPost]
-        public void Post([FromBody] string value) {
-        }
 
-        // PUT api/<MallGoodsCategoryController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) {
-        }
-
-        // DELETE api/<MallGoodsCategoryController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id) {
-        }
     }
 }

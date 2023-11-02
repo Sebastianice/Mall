@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MallDomain.entity.mannage {
+﻿namespace MallDomain.entity.mannage {
     public class MallCarousel {
 
         public long CarouselId { get; set; }
