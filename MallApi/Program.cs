@@ -6,15 +6,21 @@ using MallDomain.service.mall;
 using MallInfrastructure;
 using MallInfrastructure.service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(opts => {
-    opts.Filters.Add(new GExceptionFilter());
+    opts.Filters.Add(typeof(GExceptionFilter));
+
 });
+//使用servicefilter有参注入tokenfilter
+builder.Services.AddScoped(typeof(TokenFilter));
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(g => {
@@ -48,9 +54,10 @@ builder.Services.AddScoped<IMallUserService, MallUserService>();
 builder.Services.AddSingleton<JwtSecurityTokenHandler>();
 builder.Services.AddScoped<IMallShopCartService, MallShopCartService>();
 builder.Services.AddScoped<IMallUserAddressService,MallUserAddressService>();
+builder.Services.AddScoped<IMallUserTokenService, MallUserTokenService>();
 
 
-
+builder.Services.AddMemoryCache();
 builder.Services.AddAuthentication(x => {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;

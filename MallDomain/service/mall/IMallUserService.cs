@@ -7,9 +7,9 @@ namespace MallDomain.service.mall {
 
         // RegisterUser 注册用户
         public Task RegisterUser(RegisterUserParam req);
-        public Task UpdateUserInfo(string token, UpdateUserInfoParam req);
+        public Task<bool> UpdateUserInfo(string token, UpdateUserInfoParam req);
 
-        public Task<MallUserDetailResponse> GetUserDetail(string token);
+        public Task<MallUserDetailResponse?> GetUserDetail(string token);
 
         public Task<MallUserToken> UserLogin(UserLoginParam param);
 

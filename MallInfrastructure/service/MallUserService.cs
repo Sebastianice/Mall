@@ -1,16 +1,15 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using EntityFramework.Exceptions.Common;
 using IdentityModel;
-using K4os.Compression.LZ4.Engine;
 using MallDomain.entity.mall;
 using MallDomain.entity.mall.request;
 using MallDomain.entity.mall.response;
 using MallInfrastructure;
+using Mapster;
 using MD5Hash;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,18 +18,30 @@ namespace MallDomain.service.mall {
         private readonly MallContext mallContext;
         private readonly IConfiguration configuration;
         private readonly JwtSecurityTokenHandler jwtHandler;
-        public MallUserService(MallContext mallContext, IConfiguration configuration, JwtSecurityTokenHandler jwtHandler) {
+        private readonly IMemoryCache cache;
+        
+        public MallUserService(MallContext mallContext, IConfiguration configuration, JwtSecurityTokenHandler jwtHandler, IMemoryCache icache) {
             this.configuration = configuration;
             this.mallContext = mallContext;
             this.jwtHandler = jwtHandler;
+            this.cache = icache;
         }
 
         public Task<string> getNewToken(long timeInt, long userId) {
             throw new NotImplementedException();
         }
 
-        public Task<MallUserDetailResponse> GetUserDetail(string token) {
-            throw new NotImplementedException();
+        public async Task<MallUserDetailResponse?> GetUserDetail(string token) {
+            var userToken = await mallContext.MallUserTokens.SingleOrDefaultAsync(f => f.Token == token);
+
+            if (userToken == null) {
+                return null;
+            }
+            var user = await mallContext.MallUsers.SingleOrDefaultAsync(f => f.UserId == userToken.UserId);
+            if (user is null) {
+                return null;
+            }
+            return user.Adapt<MallUserDetailResponse>();
         }
 
         // RegisterUser 注册用户
@@ -59,8 +70,19 @@ namespace MallDomain.service.mall {
 
         }
 
-        public Task UpdateUserInfo(string token, UpdateUserInfoParam req) {
-            throw new NotImplementedException();
+        public async Task<bool> UpdateUserInfo(string token, UpdateUserInfoParam req) {
+            var userToken = await mallContext.MallUserTokens.SingleOrDefaultAsync(f => f.Token == token);
+            if (userToken == null) return false;
+            var user = await mallContext.MallUsers.SingleOrDefaultAsync(f => f.UserId == userToken.UserId);
+
+            if (user == null) return false;
+            user.PasswordMd5 = req.PasswordMd5;
+            user.NickName = req.NickName;
+            user.IntroduceSign = req.IntroduceSign;
+
+            await mallContext.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<MallUserToken> UserLogin(UserLoginParam param) {
@@ -71,14 +93,11 @@ namespace MallDomain.service.mall {
 
             var us = await mallContext.MallUsers.Where(p => p.LoginName == param.LoginName && p.PasswordMd5 == param.PasswordMd5).SingleAsync();//失败则异常，由异常处理器处理
 
-            //查询token是否失效
+            //查询是否存在token
+         
 
-         var oldtoken =await mallContext.MallUserTokens.Where(s => s.UserId == us.UserId).SingleOrDefaultAsync();
-
-            //如果没有token，或者token过期，签发新token
-            if(oldtoken is null || DateTime.Now.CompareTo(oldtoken.ExpireTime)>0) {
-
-                //无异常签发token
+            //没有就新建，存在就覆盖，签发新token               
+            //签发token
                 var identity = new Claim[] {
                 new Claim(JwtClaimTypes.Name, us.LoginName!),
                 new Claim(JwtClaimTypes.Id,us.UserId.ToString()),
@@ -93,44 +112,40 @@ namespace MallDomain.service.mall {
 
                 SymmetricSecurityKey ssk = new(secrect);
 
-                var signingCredentials = new SigningCredentials(ssk, SecurityAlgorithms.HmacSha512);
-             
+                var signingCredentials = new SigningCredentials(ssk, SecurityAlgorithms.Aes128CbcHmacSha256);
 
                 var jwtoken = new JwtSecurityToken(iss, aud, identity, nbf, exp, signingCredentials);
 
                 var token = jwtHandler.WriteToken(jwtoken);
-                var userToken = new MallUserToken() {
+
+            var oldtoken = await mallContext.MallUserTokens.Where(s => s.UserId == us.UserId).SingleOrDefaultAsync();
+            if (oldtoken == null) {
+                oldtoken = new MallUserToken {
                     ExpireTime = exp,
                     Token = token,
-                    UserId = us.UserId,
-                    UpdateTime = nbf
+                    UpdateTime = nbf,
+                    
                 };
-              
-
-
-                if (oldtoken is null) {
-                    mallContext.MallUserTokens.Add(userToken);
-                } else {
-                    oldtoken.UpdateTime = nbf;
-                    oldtoken.ExpireTime=exp;
-                    oldtoken.Token = token;
-                    mallContext.MallUserTokens.Update(oldtoken);
-                }
-
-
-                await mallContext.SaveChangesAsync();
-                return userToken;
-               
-
-              
+               await mallContext.AddAsync(oldtoken);
+            } else {
+                oldtoken.ExpireTime = exp;
+                oldtoken.Token = token;
+                oldtoken.UpdateTime = nbf;
             }
 
-            //如果有token，则检查是否过期
-            else {
-                return oldtoken;
-            }
-           
+            await mallContext.SaveChangesAsync();
+
+            cache.Set("user" + oldtoken.UserId, token);
             
+            return oldtoken;
+
+
+
+            
+
+           
+
+
 
 
 

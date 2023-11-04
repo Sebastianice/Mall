@@ -3,14 +3,13 @@ using MallDomain.entity.common.response;
 using MallDomain.entity.mall.request;
 using MallDomain.service.mall;
 using MallDomain.utils;
-using MallInfrastructure.service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MallApi.Controllers.mall {
 
     [ApiController]
-    [Route("v1/api")]
+    [Route("api/v1")]
     [Authorize(policy:"UserPolicy")]
     public class MallOrderController : ControllerBase {
 

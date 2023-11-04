@@ -2,7 +2,7 @@
 
 namespace MallDomain.service.mall {
     public interface IMallUserTokenService {
-        public Task<MallUserToken> ExistUserToken(string token);
-        public Task DeleteMallUserToken(string token);
+   
+        public Task<bool> DeleteMallUserToken(string token);
     }
 }

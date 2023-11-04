@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MallApi.Controllers.mall {
     [ApiController]
-    [Route("v1/api")]
+    [Route("api/v1")]
     public class MallShopCartController : ControllerBase {
         [HttpGet("shop-cart")]
         public async Task<Result> CartItemList() {
