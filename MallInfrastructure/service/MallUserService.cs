@@ -88,7 +88,7 @@ namespace MallDomain.service.mall {
                 //生效时间
                 var nbf = DateTime.UtcNow;
                 //
-                var exp = DateTime.UtcNow.AddMinutes(3);
+                var exp = DateTime.UtcNow.AddMinutes(10);
                 var secrect = Encoding.UTF8.GetBytes(sign!);
 
                 SymmetricSecurityKey ssk = new(secrect);

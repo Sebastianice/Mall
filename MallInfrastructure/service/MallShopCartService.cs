@@ -32,9 +32,9 @@ namespace MallInfrastructure.service {
             if (v is null) {
                 throw new Exception("不存在用户");
             }
-            var shopCartItems = await mallContext.MallShoppingCartItems.
-                Where(w => w.UserId == v.UserId && cartItemIds.Contains(w.CartItemId)).ToArrayAsync();
-            var cartItemsRes = await getMallShoppingCartItemVOS(shopCartItems);
+            MallShoppingCartItem[]? shopCartItems = await mallContext.MallShoppingCartItems.
+                Where(w => w.UserId == v.UserId && cartItemIds.Contains(w.CartItemId)).AsNoTracking().ToArrayAsync();
+            List<CartItemResponse>? cartItemsRes = await getMallShoppingCartItemVOS(shopCartItems);
             return cartItemsRes;
         }
 
@@ -45,7 +45,7 @@ namespace MallInfrastructure.service {
             foreach (var item in cartItems) {
                 ids.Add(item.GoodsId);
             }
-       var newBeeMallGoods=await    mallContext.MallGoodsInfos.Where(g => ids.Contains(g.GoodsId)).ToArrayAsync();
+            var newBeeMallGoods = await mallContext.MallGoodsInfos.Where(g => ids.Contains(g.GoodsId)).AsNoTracking().ToArrayAsync();
 
             var newBeeMallGoodsMap = new Dictionary<long, MallGoodsInfo>();
             foreach (var item in newBeeMallGoods)
@@ -53,12 +53,13 @@ namespace MallInfrastructure.service {
                 newBeeMallGoodsMap[item.GoodsId] = item;
             }
             List<CartItemResponse> cartItemsRes = new();
-            foreach (var item in cartItems) {
-                var cartItemRes = item.Adapt<CartItemResponse>();
+            foreach (MallShoppingCartItem item in cartItems) {
+                CartItemResponse? cartItemRes = item.Adapt<CartItemResponse>();
                 if (newBeeMallGoodsMap.TryGetValue(cartItemRes.GoodsId,out MallGoodsInfo? v)){
-
+                    
                     cartItemRes.GoodsCoverImg = v.GoodsCoverImg;
                     cartItemRes.GoodsName = v.GoodsName;
+                    cartItemRes.SellingPrice = v.SellingPrice;
                     cartItemsRes.Add(cartItemRes);
                 }
             }

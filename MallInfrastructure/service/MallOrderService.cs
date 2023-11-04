@@ -53,6 +53,8 @@ namespace MallInfrastructure.service {
             }
 
             var newBeeMallGoods = await mallContext.MallGoodsInfos.Where(g => goodsIds.Contains(g.GoodsId)).AsNoTracking().ToArrayAsync();
+
+            //对把商品id和商品对应起来
             var newBeeMallGoodsMap = new Dictionary<long, MallGoodsInfo>();
             foreach (var item in newBeeMallGoods) {
                 if (item.GoodsSellStatus == GoodsStatusEnum.GOODS_UNDER.Code()) {
@@ -105,7 +107,7 @@ namespace MallInfrastructure.service {
                             throw new Exception("库存不足");
                         }
                         goodsInfo.StockNum = goodsInfo.StockNum - item.GoodsCount;
-                        mallContext.MallGoodsInfos.Update(goodsInfo);
+                   //     mallContext.MallGoodsInfos.Update(goodsInfo);
 
                     }
 
@@ -151,6 +153,8 @@ namespace MallInfrastructure.service {
                   await  mallContext.MallOrderItems.AddRangeAsync(newBeeMallOrderItems);
 
                     await mallContext.SaveChangesAsync();
+
+                    return orderNo;
                 }
             }
 

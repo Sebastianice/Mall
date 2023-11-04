@@ -11,7 +11,7 @@
         public static int Code(this GoodsStatusEnum enm) {
             switch (enm) {
                 case GoodsStatusEnum.GOODS_UNDER:
-                    return 0;
+                    return 1;
                 default:
                     return -9;
             }
