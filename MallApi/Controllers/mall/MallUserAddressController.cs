@@ -1,9 +1,13 @@
-﻿using MallDomain.entity.common.response;
+﻿using MallApi.filter;
+using MallDomain.entity.common.response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MallApi.Controllers.mall {
     [ApiController]
     [Route("api/v1")]
+    [ServiceFilter(typeof(TokenFilter))]
+    [Authorize(policy: "UserPolicy")]
     public class MallUserAddressController : ControllerBase {
 
         [HttpGet("address")]
