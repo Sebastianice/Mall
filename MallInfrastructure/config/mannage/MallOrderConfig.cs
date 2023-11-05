@@ -6,6 +6,7 @@ namespace MallInfrastructure.config.mannage {
     internal class MallOrderConfig : IEntityTypeConfiguration<MallOrder> {
         public void Configure(EntityTypeBuilder<MallOrder> builder) {
             builder.HasKey(k => k.OrderId);
+            builder.HasQueryFilter(k => k.IsDeleted == false);
             builder.ToTable("Order");
         }
     }

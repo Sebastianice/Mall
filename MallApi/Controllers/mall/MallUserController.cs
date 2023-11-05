@@ -11,20 +11,20 @@ namespace MallApi.Controllers.mall {
     [ApiController]
     [Route("api/v1")]
 
-    [Authorize(policy:"UserPolicy")]
+    [Authorize(policy: "UserPolicy")]
     public class MallUserController : ControllerBase {
         private readonly IMallUserService mallUserService;
         private readonly IMallUserTokenService mallUserTokenService;
         public MallUserController(IMallUserService mallUserService, IMallUserTokenService mallUserTokenService) {
             this.mallUserService = mallUserService;
-            this.mallUserTokenService= mallUserTokenService;
+            this.mallUserTokenService = mallUserTokenService;
         }
         [ServiceFilter(typeof(TokenFilter))]
         [HttpPut("user/info")]
-        public async Task<Result> UserInfoUpdate([FromBody]UpdateUserInfoParam up) {
+        public async Task<Result> UserInfoUpdate([FromBody] UpdateUserInfoParam up) {
             var token = Request.Headers["Authorization"].ToString()[7..];
 
-        var rep= await mallUserService.UpdateUserInfo(token, up);
+            var rep = await mallUserService.UpdateUserInfo(token, up);
             if (!rep) {
                 return Result.FailWithMessage("更新用户信息失败");
             }
@@ -35,18 +35,18 @@ namespace MallApi.Controllers.mall {
         [HttpGet("user/info")]
         public async Task<Result> GetUserInfo() {
             var token = Request.Headers["Authorization"].ToString()[7..];
-       var rep=   await  mallUserService.GetUserDetail(token);
-            if(rep is null) {
+            var rep = await mallUserService.GetUserDetail(token);
+            if (rep is null) {
                 return Result.FailWithMessage("未查询到记录");
             }
-            
+
             return Result.OkWithData(rep);
         }
         [ServiceFilter(typeof(TokenFilter))]
         [HttpPost("user/logout")]
         public async Task<Result> UserLogout() {
             var token = Request.Headers["Authorization"].ToString()[7..];
-        var flag= await   mallUserTokenService.DeleteMallUserToken(token);
+            var flag = await mallUserTokenService.DeleteMallUserToken(token);
             if (!flag) {
                 return Result.FailWithMessage("未知错误，登出失败");
             }
@@ -83,8 +83,8 @@ namespace MallApi.Controllers.mall {
             }
 
 
-           var mallUserToken= await mallUserService.UserLogin(userLoginParam);
-            return Result.OkWithDetailed(mallUserToken,"登录成功");
+            var mallUserToken = await mallUserService.UserLogin(userLoginParam);
+            return Result.OkWithDetailed(mallUserToken, "登录成功");
         }
     }
 }

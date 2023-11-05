@@ -1,4 +1,6 @@
-﻿using MallDomain.entity.common.enums;
+﻿using System.Collections.Immutable;
+using System.Collections.Specialized;
+using MallDomain.entity.common.enums;
 using MallDomain.entity.mall;
 using MallDomain.entity.mall.response;
 using MallDomain.entity.mannage;
@@ -7,7 +9,6 @@ using MallDomain.service.mall;
 using MallDomain.utils;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MallInfrastructure.service {
     public class MallOrderService : IMallOrderService {
@@ -16,25 +17,116 @@ namespace MallInfrastructure.service {
         public MallOrderService(MallContext mallContext) {
             this.mallContext = mallContext;
         }
-
-        public Task CancelOrder(string token, string orderNo) {
-            throw new NotImplementedException();
+        // CancelOrder 关闭订单
+        public async Task CancelOrder(string token, string orderNo) {
+            var userToken = await mallContext.MallUserTokens.Where(p => p.Token == token).SingleOrDefaultAsync();
+            if (userToken == null) {
+                throw new Exception("不存在的用户");
+            }
+            var order = await mallContext.MallOrders.SingleOrDefaultAsync(i => i.OrderNo == orderNo && i.UserId == userToken.UserId);
+            if (order == null) {
+                throw new Exception("不存在订单");
+            }
+            order.OrderStatus = MallOrderStatusEnum.ORDER_CLOSED_BY_MALLUSER.Code();
+            order.UpdateTime = DateTime.Now;
+            await mallContext.SaveChangesAsync();
+        }
+        //完结订单
+        public async Task FinishOrder(string token, string orderNo) {
+            var userToken = await mallContext.MallUserTokens.Where(p => p.Token == token).SingleOrDefaultAsync();
+            if (userToken == null) {
+                throw new Exception("不存在的用户");
+            }
+            var order = await mallContext.MallOrders.SingleOrDefaultAsync(i => i.OrderNo == orderNo && i.UserId == userToken.UserId);
+            if (order == null) {
+                throw new Exception("不存在订单");
+            }
+            order.OrderStatus = MallOrderStatusEnum.ORDER_SUCCESS.Code();
+            order.UpdateTime = DateTime.Now;
+            await mallContext.SaveChangesAsync();
         }
 
-        public Task FinishOrder(string token, string orderNo) {
-            throw new NotImplementedException();
+        public async Task<MallOrderDetailVO> GetOrderDetailByOrderNo(string token, string orderNo) {
+            var userToken = await mallContext.MallUserTokens.Where(p => p.Token == token).SingleOrDefaultAsync();
+            if (userToken == null) {
+                throw new Exception("不存在的用户");
+            }
+            MallOrder? order = await mallContext.MallOrders.SingleOrDefaultAsync(i => i.OrderNo == orderNo && i.UserId == userToken.UserId);
+            if (order == null) {
+                throw new Exception("不存在订单");
+            }
+            List<MallOrderItem>? orderItems = await mallContext.MallOrderItems.Where(w => w.OrderId == order.OrderId).ToListAsync();
+            if (orderItems.Count() == 0) {
+                throw new Exception("该订单项不存在");
+            }
+            List<NewBeeMallOrderItemVO> list = orderItems.Adapt<List<NewBeeMallOrderItemVO>>();
+            MallOrderDetailVO? detail = order.Adapt<MallOrderDetailVO>();
+            var orderStatusStr = MallOrderStatusExtensions.GetNewBeeMallOrderStatusEnumByStatus(detail.OrderStatus);
+            var paystr = MallOrderStatusExtensions.GetNewBeeMallOrderStatusEnumByStatus(detail.PayType);
+            detail.PayTypeString = paystr;
+            detail.OrderStatusString = orderStatusStr;
+            detail.NewBeeMallOrderItemVO = list;
+            return detail;
         }
 
-        public Task<MallOrderDetailVO> GetOrderDetailByOrderNo(string token, string orderNo) {
-            throw new NotImplementedException();
+        public async Task<(List<MallOrderResponse> list, long total)> MallOrderListBySearch(string token, int pageNumber, string status) {
+            var userToken = await mallContext.MallUserTokens.Where(p => p.Token == token).SingleOrDefaultAsync();
+            if (userToken == null) {
+                throw new Exception("不存在的用户");
+            }
+            var query = mallContext.MallOrders.AsQueryable();
+            if (status != "") {
+                var s = int.Parse(status);
+                query = query.Where(w => w.OrderStatus == s);
+            }
+            var count = await query.Where(w => w.UserId == userToken.UserId).CountAsync();
+            //这里前段没有做滚动加载，直接显示全部订单
+            //limit=5;
+            var offset = 5 * (pageNumber - 1);
+
+
+            if (count > 0) {
+                var orders =await query.OrderByDescending(o => o.OrderId).Skip(offset).Take(5).AsNoTracking().ToListAsync();
+                //实体转换
+                var orderResp = orders.Adapt<List<MallOrderResponse>>();
+                foreach (var item in orderResp) {
+                    //订单状态设置中文值显示
+                    item.OrderStatusString = MallOrderStatusExtensions.GetNewBeeMallOrderStatusEnumByStatus(item.OrderStatus);
+                }
+
+
+                // 返回订单id
+                List<long> ids = new();
+                foreach (var item in orders)
+                {
+                    ids.Add(item.OrderId);
+                }
+              var items=await  mallContext.MallOrderItems.Where(i => ids.Contains(i.OrderId)).ToListAsync();
+
+              var  itemByOrderIdMap=new Dictionary<long,List<MallOrderItem>>();
+                foreach (var item in itemByOrderIdMap)
+                {
+                    item.Value = new List<MallOrderItem>();
+                }
+
+
+            }
+
+            return (new List<MallOrderResponse>(), 0);
         }
 
-        public Task<(MallOrderResponse[] list, long total)> MallOrderListBySearch(string token, int pageNumber, string status) {
-            throw new NotImplementedException();
-        }
+        public async Task PaySuccess(string orderNo, int payType) {
+            MallOrder? order = await mallContext.MallOrders.SingleAsync(s => s.OrderNo == orderNo);
+            if (order.OrderStatus == 0) {
+                throw new Exception("订单状态异常");
+            }
+            order.OrderStatus = MallOrderStatusEnum.ORDER_PAID.Code();
+            order.PayType = payType;
+            order.PayStatus = 1;
+            order.PayTime = DateTime.Now;
+            order.UpdateTime = DateTime.Now;
 
-        public Task PaySuccess(string orderNo, int payType) {
-            throw new NotImplementedException();
+            await mallContext.SaveChangesAsync();
         }
 
 
@@ -45,9 +137,9 @@ namespace MallInfrastructure.service {
             if (userToken == null) {
                 throw new Exception("不存在的用户");
             }
-            var itemIdlist = new List<long> ();
+            var itemIdlist = new List<long>();
             var goodsIds = new List<long>();
-            foreach(var item in myShoppingCartItems) {
+            foreach (var item in myShoppingCartItems) {
                 itemIdlist.Add(item.CartItemId);
                 goodsIds.Add(item.GoodsId);
             }
@@ -107,7 +199,7 @@ namespace MallInfrastructure.service {
                             throw new Exception("库存不足");
                         }
                         goodsInfo.StockNum = goodsInfo.StockNum - item.GoodsCount;
-                   //     mallContext.MallGoodsInfos.Update(goodsInfo);
+                        //     mallContext.MallGoodsInfos.Update(goodsInfo);
 
                     }
 
@@ -132,25 +224,24 @@ namespace MallInfrastructure.service {
                     newBeeMallOrder.ExtraInfo = "";
 
                     //生成订单项并保存订单项纪录
-                    
-             await  mallContext.MallOrders.AddAsync(newBeeMallOrder);
+
+                    await mallContext.MallOrders.AddAsync(newBeeMallOrder);
                     //保存更改获取订单主键
-             await mallContext.SaveChangesAsync();
+                    await mallContext.SaveChangesAsync();
                     //生成订单收货地址快照，并保存至数据库
                     var newBeeMallOrderAddress = userAddress.Adapt<MallOrderAddress>();
                     newBeeMallOrderAddress.OrderId = newBeeMallOrder.OrderId;
                     await mallContext.MallOrderAddressese.AddAsync(newBeeMallOrderAddress);
                     //生成所有的订单项快照，并保存至数据库
                     List<MallOrderItem> newBeeMallOrderItems = new List<MallOrderItem>();
-                    foreach (var item in myShoppingCartItems)
-                    {
+                    foreach (var item in myShoppingCartItems) {
                         var newBeeMallOrderItem = item.Adapt<MallOrderItem>();
                         newBeeMallOrderItem.OrderId = newBeeMallOrder.OrderId;
                         newBeeMallOrderItem.CreateTime = DateTime.Now;
                         newBeeMallOrderItems.Add(newBeeMallOrderItem);
 
                     }
-                  await  mallContext.MallOrderItems.AddRangeAsync(newBeeMallOrderItems);
+                    await mallContext.MallOrderItems.AddRangeAsync(newBeeMallOrderItems);
 
                     await mallContext.SaveChangesAsync();
 

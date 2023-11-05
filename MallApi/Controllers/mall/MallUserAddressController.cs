@@ -1,7 +1,10 @@
 ﻿using MallApi.filter;
 using MallDomain.entity.common.response;
+using MallDomain.entity.mall.request;
+using MallDomain.service.mall;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace MallApi.Controllers.mall {
     [ApiController]
@@ -9,30 +12,52 @@ namespace MallApi.Controllers.mall {
     [ServiceFilter(typeof(TokenFilter))]
     [Authorize(policy: "UserPolicy")]
     public class MallUserAddressController : ControllerBase {
+        private readonly IMallUserAddressService mallUserAddressService;
 
-        [HttpGet("address")]
-        public async Task<Result> UserInfoUpdate() {
-            return Result.Ok();
+        public MallUserAddressController(IMallUserAddressService mallUserAddressService) {
+            this.mallUserAddressService = mallUserAddressService;
+        }
+
+        [HttpGet("address/{addressId}")]
+        public async Task<Result> GetMallUserAddress(long addressId) {
+            var token = Request.Headers["Authorization"].ToString()[7..];
+            var adrress=    await  mallUserAddressService.GetMallUserAddressById(token,addressId);
+            return Result.OkWithData(adrress);
         }
         [HttpPost("address")]
-        public async Task<Result> SaveUserAddress() {
-            return Result.Ok();
+        public async Task<Result> SaveUserAddress([FromBody] AddAddressParam req) {
+            var token = Request.Headers["Authorization"].ToString()[7..];
+          await  mallUserAddressService.SaveUserAddress(token, req);
+            return Result.OkWithMessage("保存地址成功");
         }
         [HttpPut("address")]
-        public async Task<Result> UpdateMallUserAddress() {
-            return Result.Ok();
+        public async Task<Result> UpdateMallUserAddress([FromBody] UpdateAddressParam req) {
+            var token = Request.Headers["Authorization"].ToString()[7..];
+            await mallUserAddressService.UpdateUserAddress(token, req);
+            return Result.OkWithMessage("更新地址成功");
         }
-        [HttpGet("address/{addressId}")]
-        public async Task<Result> GetMallUserAddress() {
-            return Result.Ok();
+        [HttpGet("address")]
+        public async Task<Result> AddressList() {
+            var token = Request.Headers["Authorization"].ToString()[7..];
+            var addressList = await mallUserAddressService.GetMyAddress(token);
+            if(addressList is null) {
+                return Result.FailWithMessage("获取地址失败");
+            }
+            return Result.OkWithData(addressList);
         }
         [HttpGet("address/default")]
         public async Task<Result> GetMallUserDefaultAddress() {
-            return Result.Ok();
+            var token = Request.Headers["Authorization"].ToString()[7..];
+            var address = await mallUserAddressService.GetMallUserDefaultAddress(token);
+     
+            return Result.OkWithData(address);
         }
         [HttpDelete("address/{addressId}")]
-        public async Task<Result> DeleteUserAddress() {
-            return Result.Ok();
+        public async Task<Result> DeleteUserAddress(long addressId) {
+
+            var token = Request.Headers["Authorization"].ToString()[7..];
+            await mallUserAddressService.DeleteUserAddress(token, addressId);
+            return Result.OkWithMessage("删除成功");
         }
     }
 }

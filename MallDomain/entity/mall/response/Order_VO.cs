@@ -7,7 +7,7 @@
         public int TotalPrice { get; set; }
 
         public int PayType { get; set; }
-        public string? OrderStatus { get; set; }
+        public int OrderStatus { get; set; }
         public string? OrderStatusString { get; set; }
         public DateTime CreateTime { get; set; }
 
@@ -31,10 +31,10 @@
         public int PayType { get; set; }
         public string? PayTypeString { get; set; }
         public DateTime PayTime { get; set; }
-        public string? OrderStatus { get; set; }
+        public int OrderStatus { get; set; }
         public string? OrderStatusString { get; set; }
         public DateTime CreateTime { get; set; }
 
-        public NewBeeMallOrderItemVO[]? NewBeeMallOrderItemVO { get; set; }
+        public List<NewBeeMallOrderItemVO>? NewBeeMallOrderItemVO { get; set; }
     }
 }

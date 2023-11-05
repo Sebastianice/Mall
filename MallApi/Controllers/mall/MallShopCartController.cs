@@ -1,12 +1,16 @@
-﻿using MallDomain.entity.common.response;
+﻿using MallApi.filter;
+using MallDomain.entity.common.response;
 using MallDomain.entity.mall.request;
 using MallDomain.service.mall;
 using MallDomain.utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MallApi.Controllers.mall {
     [ApiController]
     [Route("api/v1")]
+    [ServiceFilter(typeof(TokenFilter))]
+    [Authorize(policy:"UserPolicy")]
     public class MallShopCartController : ControllerBase {
         private readonly IMallShopCartService mallShopCartService;
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MallDomain.entity.mall;
 using MallDomain.entity.mall.request;
 using MallDomain.service.mall;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace MallInfrastructure.service {
@@ -16,43 +17,109 @@ namespace MallInfrastructure.service {
             this.mallContext = mallContext;
         }
 
-        public Task DeleteUserAddress(string token, long id) {
-            throw new NotImplementedException();
+        public async Task DeleteUserAddress(string token, long id) {
+            var userToken = await mallContext.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
+            if (userToken == null) {
+                throw new Exception("不存在的用户");
+            }
+            var address = await mallContext.MallUserAddresses.SingleOrDefaultAsync(w => w.UserId == userToken.UserId && w.AddressId == id);
+
+            if (address == null) {
+                throw new Exception("不存在该地址");
+            }
+            address.IsDeleted = true;
+            await mallContext.SaveChangesAsync();
         }
 
-        public Task<MallUserAddress> GetMallUserAddressById(string token, long id) {
-            throw new NotImplementedException();
+        public async Task<MallUserAddress> GetMallUserAddressById(string token, long id) {
+            var userToken = await mallContext.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
+            if (userToken == null) {
+                throw new Exception("不存在的用户");
+            }
+            var address = await mallContext.MallUserAddresses.SingleOrDefaultAsync(w => w.UserId == userToken.UserId && w.AddressId == id);
+
+            if (address == null) {
+                throw new Exception("不存在该地址");
+            }
+            //address.IsDeleted = true;
+            return address;
         }
+
+
 
         public async Task<MallUserAddress> GetMallUserDefaultAddress(string token) {
 
 
-          var userToken=await mallContext.MallUserTokens.Where(p => p.Token == token).SingleOrDefaultAsync();
-            if(userToken == null) {
+            var userToken = await mallContext.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
+            if (userToken == null) {
                 throw new Exception("不存在的用户");
             }
 
-         var uadress=   await mallContext.MallUserAddresses.Where(p => p.UserId == userToken.UserId && p.DefaultFlag == true).SingleOrDefaultAsync();
-if(uadress is null) {
-                throw new Exception("不存在默认地址失败");
+            var uadress = await mallContext.MallUserAddresses.Where(p => p.UserId == userToken.UserId && p.DefaultFlag == true).SingleOrDefaultAsync();
+            if (uadress is null) {
+                return null;
             }
 
 
             return uadress;
-    
-            
+
+
         }
 
-        public Task<List<MallUserAddress>> GetMyAddress(string token) {
-            throw new NotImplementedException();
+        public async Task<List<MallUserAddress>?> GetMyAddress(string token) {
+
+            var userToken = await mallContext.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
+            if (userToken is null) {
+                return null;
+            }
+            var list = await mallContext.MallUserAddresses.Where(s => s.UserId == userToken.UserId).AsNoTracking().ToListAsync();
+
+            return list;
+
         }
 
-        public Task SaveUserAddress(string token, AddAddressParam req) {
-            throw new NotImplementedException();
+        public async Task SaveUserAddress(string token, AddAddressParam req) {
+
+            var userToken = await mallContext.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
+            if (userToken == null) {
+                throw new Exception("不存在的用户");
+            }
+            if (req.DefaultFlag) {
+                var oldAddress = await mallContext.MallUserAddresses.SingleOrDefaultAsync(u => userToken.UserId == userToken.UserId&&u.DefaultFlag==true);
+                if (oldAddress is not null) {
+                    oldAddress.DefaultFlag = false;
+                } 
+            }
+            var newAdress = req.Adapt<MallUserAddress>();
+            mallContext.MallUserAddresses.Add(newAdress);
+            await mallContext.SaveChangesAsync();
+
+
         }
 
-        public Task UpdateUserAddress(string token, UpdateAddressParam req) {
-            throw new NotImplementedException();
+        public async Task UpdateUserAddress(string token, UpdateAddressParam req) {
+            var userToken = await mallContext.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
+            if (userToken == null) {
+                throw new Exception("不存在的用户");
+            }
+
+            var adress = await mallContext.MallUserAddresses.
+                SingleOrDefaultAsync(p => p.AddressId == req.AddressId && userToken.UserId == p.UserId);
+
+            if (adress is  null) {
+                throw new Exception("不存在该地址");
+            }
+            adress=req.Adapt<MallUserAddress>();
+            mallContext.MallUserAddresses.Update(adress);
+
+            if (req.DefaultFlag) {
+                var oldAddress = await mallContext.MallUserAddresses.SingleOrDefaultAsync(u => userToken.UserId == userToken.UserId && u.DefaultFlag == true);
+                if (oldAddress is not null) {
+                    oldAddress.DefaultFlag = false;
+                } 
+            }
+
+            await mallContext.SaveChangesAsync();
         }
     }
 }
