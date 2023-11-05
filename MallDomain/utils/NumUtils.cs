@@ -26,11 +26,11 @@ namespace MallDomain.utils {
         }
 
         // '2,3' 转换为[2,3]
-        public List<int> StrToInt(string str) {
-            var list=new List<int>();
+        public static List<long> StrToInt(string str) {
+            var list=new List<long>();
             foreach (var item in str.Split(","))
             {
-                list.Add(int.Parse(item));
+                list.Add(long.Parse(item));
             }
             return list;
         }
