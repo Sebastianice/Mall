@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mall {
-    public class MallUser {
+﻿namespace MallDomain.entity.mall
+{
+    public class MallUser
+    {
         public long UserId { get; set; }
         public string? NickName { get; set; }
         public string? LoginName { get; set; }

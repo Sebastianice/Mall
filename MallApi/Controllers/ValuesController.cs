@@ -3,38 +3,45 @@ using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace MallApi.Controllers {
+namespace MallApi.Controllers
+{
     [Route("api/v")]
     [ApiController]
-    [Authorize(policy:"AdminPolicy")]
-    public class ValuesController : ControllerBase {
+    [Authorize(policy: "AdminPolicy")]
+    public class ValuesController : ControllerBase
+    {
         // GET: api/<ValuesController>
         [HttpGet]
-        public IEnumerable<string> Get() {
-          var authorization =  Request.Headers["Authorization"].ToString();
+        public IEnumerable<string> Get()
+        {
+            var authorization = Request.Headers["Authorization"].ToString();
             var token = authorization[7..];
             return new string[] { token };
         }
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public string Get(int id) {
+        public string Get(int id)
+        {
             return "value";
         }
 
         // POST api/<ValuesController>
         [HttpPost]
-        public void Post([FromBody] string value) {
+        public void Post([FromBody] string value)
+        {
         }
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) {
+        public void Put(int id, [FromBody] string value)
+        {
         }
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id) {
+        public void Delete(int id)
+        {
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using MallDomain.entity.mall;
 using MallDomain.entity.mall.response;
 
-namespace MallDomain.service.mall {
-    public interface IMallOrderService {
+namespace MallDomain.service.mall
+{
+    public interface IMallOrderService
+    {
         // SaveOrder 保存订单
         public Task<string> SaveOrder(string token, MallUserAddress userAddress, List<CartItemResponse> myShoppingCartItems);
 

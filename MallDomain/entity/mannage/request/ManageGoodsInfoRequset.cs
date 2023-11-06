@@ -1,12 +1,15 @@
 ﻿using MallDomain.entity.common.request;
 
-namespace MallDomain.entity.mannage.request {
-    public class MallGoodsInfoSearch {
+namespace MallDomain.entity.mannage.request
+{
+    public class MallGoodsInfoSearch
+    {
         public PageInfo PageInfo { get; set; }
         public MallGoodsInfo MallGoodsInfo { get; set; }
     }
 
-    public class GoodsInfoAddParam {
+    public class GoodsInfoAddParam
+    {
         public string? GoodsName { get; set; }
         public string? GoodsIntro { get; set; }
         public int GoodsCategoryId { get; set; }
@@ -20,7 +23,8 @@ namespace MallDomain.entity.mannage.request {
         public string GoodsSellStatus { get; set; }
     }
 
-    public class GoodsInfoUpdateParam {
+    public class GoodsInfoUpdateParam
+    {
         public string GoodsId { get; set; }
         public string GoodsName { get; set; }
         public string GoodsIntro { get; set; }
@@ -41,7 +45,8 @@ namespace MallDomain.entity.mannage.request {
         public DateTime UpdateTime { get; set; }
     }
 
-    public class StockNumDTO {
+    public class StockNumDTO
+    {
         public int GoodsId { get; set; }
         public int GoodsCount { get; set; }
     }

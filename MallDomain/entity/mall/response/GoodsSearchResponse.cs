@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mall.response {
-    public class GoodsSearchResponse {
+﻿namespace MallDomain.entity.mall.response
+{
+    public class GoodsSearchResponse
+    {
         public long GoodsId { get; set; }
         public string? GoodsName { get; set; }
         public string? GoodsInfo { get; set; }
@@ -7,7 +9,8 @@
         public int SellingPrice { get; set; }
     }
 
-    public class GoodsInfoDetailResponse {
+    public class GoodsInfoDetailResponse
+    {
         public long GoodsId { get; set; }
         public string? GoodsName { get; set; }
         public string? GoodsIntro { get; set; }

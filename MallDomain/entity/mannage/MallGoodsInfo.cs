@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mannage {
-    public class MallGoodsInfo {
+﻿namespace MallDomain.entity.mannage
+{
+    public class MallGoodsInfo
+    {
         public long GoodsId { get; set; }
         public string? GoodsName { get; set; }
         public string? GoodsIntro { get; set; }

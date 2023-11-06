@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.common.enums {
-    public enum IndexConfigEnum {
+﻿namespace MallDomain.entity.common.enums
+{
+    public enum IndexConfigEnum
+    {
 
         IndexSearchHots = 1,
 
@@ -12,10 +14,13 @@
         IndexGoodsRecommond = 5
     }
 
-    public static class IndexConfigEnumExtensions {
+    public static class IndexConfigEnumExtensions
+    {
 
-        public static int Code(this IndexConfigEnum indexConfigEnum) {
-            switch (indexConfigEnum) {
+        public static int Code(this IndexConfigEnum indexConfigEnum)
+        {
+            switch (indexConfigEnum)
+            {
                 case IndexConfigEnum.IndexSearchHots:
                     return 1;
                 case IndexConfigEnum.IndexSearchDownHots:

@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mannage {
-    public class MallAdminUser {
+﻿namespace MallDomain.entity.mannage
+{
+    public class MallAdminUser
+    {
 
         public long AdminUserId { get; set; }
         public string? LoginUserName { get; set; }

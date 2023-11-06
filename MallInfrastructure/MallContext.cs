@@ -2,9 +2,12 @@
 using MallDomain.entity.mannage;
 using Microsoft.EntityFrameworkCore;
 
-namespace MallInfrastructure {
-    public class MallContext : DbContext {
-        public MallContext(DbContextOptions<MallContext> options) : base(options) {
+namespace MallInfrastructure
+{
+    public class MallContext : DbContext
+    {
+        public MallContext(DbContextOptions<MallContext> options) : base(options)
+        {
         }
 
         public DbSet<MallOrderAddress> MallOrderAddressese { get; set; }
@@ -23,12 +26,14 @@ namespace MallInfrastructure {
 
 
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+
             base.OnConfiguring(optionsBuilder);
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
             base.OnModelCreating(modelBuilder);
             /* modelBuilder.ApplyConfiguration(new MallOrderAddressConfig());
              modelBuilder.ApplyConfiguration(new MallShoppingCartItemConfig());

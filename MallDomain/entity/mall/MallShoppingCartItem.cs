@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mall {
-    public class MallShoppingCartItem {
+﻿namespace MallDomain.entity.mall
+{
+    public class MallShoppingCartItem
+    {
 
         public long CartItemId { get; set; }
         public long UserId { get; set; }

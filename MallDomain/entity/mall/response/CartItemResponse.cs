@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mall.response {
-    public class CartItemResponse {
+﻿namespace MallDomain.entity.mall.response
+{
+    public class CartItemResponse
+    {
         public long CartItemId { get; set; }
         public long GoodsId { get; set; }
         public string? GoodsName { get; set; }

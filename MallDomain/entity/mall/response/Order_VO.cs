@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mall.response {
-    public class MallOrderResponse {
+﻿namespace MallDomain.entity.mall.response
+{
+    public class MallOrderResponse
+    {
 
         public long OrderId { get; set; }
         public string? OrderNo { get; set; }
@@ -13,7 +15,8 @@
 
         public NewBeeMallOrderItemVO[]? NewBeeMallOrderItemVO { get; set; }
     }
-    public class NewBeeMallOrderItemVO {
+    public class NewBeeMallOrderItemVO
+    {
         public long GoodsId { get; set; }
         public int GoodsCount { get; set; }
         public string? GoodsName { get; set; }
@@ -23,7 +26,8 @@
         public int SellingPrice { get; set; }
 
     }
-    public class MallOrderDetailVO {
+    public class MallOrderDetailVO
+    {
         public string? OrderNo { get; set; }
 
         public int TotalPrice { get; set; }

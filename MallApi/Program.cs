@@ -6,15 +6,14 @@ using MallDomain.service.mall;
 using MallInfrastructure;
 using MallInfrastructure.service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Org.BouncyCastle.Asn1.X509.Qualified;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(opts => {
+builder.Services.AddControllers(opts =>
+{
     opts.Filters.Add(typeof(GExceptionFilter));
 
 });
@@ -23,10 +22,13 @@ builder.Services.AddScoped(typeof(TokenFilter));
 
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(g => {
-    var scheme = new OpenApiSecurityScheme() {
+builder.Services.AddSwaggerGen(g =>
+{
+    var scheme = new OpenApiSecurityScheme()
+    {
         Description = "Authorization header. \r\nExample: 'Bearer 12345abcdef'",
-        Reference = new OpenApiReference {
+        Reference = new OpenApiReference
+        {
             Type = ReferenceType.SecurityScheme,
             Id = "Authorization"
         },
@@ -53,19 +55,22 @@ builder.Services.AddScoped<IMallOrderService, MallOrderService>();
 builder.Services.AddScoped<IMallUserService, MallUserService>();
 builder.Services.AddSingleton<JwtSecurityTokenHandler>();
 builder.Services.AddScoped<IMallShopCartService, MallShopCartService>();
-builder.Services.AddScoped<IMallUserAddressService,MallUserAddressService>();
+builder.Services.AddScoped<IMallUserAddressService, MallUserAddressService>();
 builder.Services.AddScoped<IMallUserTokenService, MallUserTokenService>();
 
 
 builder.Services.AddMemoryCache();
-builder.Services.AddAuthentication(x => {
+builder.Services.AddAuthentication(x =>
+{
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer("UserScheme", o => {
+}).AddJwtBearer("UserScheme", o =>
+{
     var Issurer = builder.Configuration["UserToken:iss"];  //发行人
     var Audience = builder.Configuration["UserToken:aud"];       //受众人
     var secretCredentials = builder.Configuration["UserToken:sign"];
-    o.TokenValidationParameters = new TokenValidationParameters {
+    o.TokenValidationParameters = new TokenValidationParameters
+    {
 
         //是否验证发行人
         ValidateIssuer = true,
@@ -80,12 +85,14 @@ builder.Services.AddAuthentication(x => {
         ValidateLifetime = true, //验证生命周期
         RequireExpirationTime = true, //过期时间
     };
-}).AddJwtBearer("AdminScheme", o => {
+}).AddJwtBearer("AdminScheme", o =>
+{
 
     var Issurer = builder.Configuration["AdminToken:iss"];  //发行人
     var Audience = builder.Configuration["AdminToken:aud"];       //受众人
     var secretCredentials = builder.Configuration["AdminToken:sign"];
-    o.TokenValidationParameters = new TokenValidationParameters {
+    o.TokenValidationParameters = new TokenValidationParameters
+    {
         //是否验证发行人
         ValidateIssuer = true,
         ValidIssuer = Issurer,//发行人
@@ -102,21 +109,25 @@ builder.Services.AddAuthentication(x => {
 
 });
 
-builder.Services.AddAuthorization(builder => {
-    builder.AddPolicy("UserPolicy", p => {
-        
+builder.Services.AddAuthorization(builder =>
+{
+    builder.AddPolicy("UserPolicy", p =>
+    {
+
         p.AddAuthenticationSchemes("UserScheme");
         p.RequireRole("User");
-      
+
     });
-    builder.AddPolicy("AdminPolicy", p => {
+    builder.AddPolicy("AdminPolicy", p =>
+    {
         p.AddAuthenticationSchemes("AdminScheme");
-         p.RequireRole("Admin");
+        p.RequireRole("Admin");
     });
 });
 
-builder.Services.AddDbContext<MallContext>(p => {
- 
+builder.Services.AddDbContext<MallContext>(p =>
+{
+
     var version = new MySqlServerVersion(new Version(vs));
     p.UseMySql(con, version);
     p.UseExceptionProcessor();
@@ -130,7 +141,8 @@ builder.Services.AddDbContext<MallContext>(p => {
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }

@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mannage.response {
-    public class NewBeeMallOrderDetailVO {
+﻿namespace MallDomain.entity.mannage.response
+{
+    public class NewBeeMallOrderDetailVO
+    {
         public int OrderId { get; set; }
         public string? OrderNo { get; set; }
         public int TotalPrice { get; set; }
@@ -11,7 +13,8 @@
         public List<NewBeeMallOrderItemVO> NewBeeMallOrderItemVOS { get; set; } = new List<NewBeeMallOrderItemVO>();
     }
 
-    public class NewBeeMallOrderItemVO {
+    public class NewBeeMallOrderItemVO
+    {
         public int OrderItemId { get; set; }
         public int GoodsId { get; set; }
         public string? GoodsName { get; set; }

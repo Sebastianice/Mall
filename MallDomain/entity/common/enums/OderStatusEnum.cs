@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.common.enums {
-    public enum MallOrderStatusEnum {
+﻿namespace MallDomain.entity.common.enums
+{
+    public enum MallOrderStatusEnum
+    {
         DEFAULT = -9,
         ORDER_PRE_PAY = 0,
         ORDER_PAID = 1,
@@ -11,9 +13,12 @@
         ORDER_CLOSED_BY_JUDGE = -3
     }
 
-    public static class MallOrderStatusExtensions {
-        public static string GetNewBeeMallOrderStatusEnumByStatus(int status) {
-            switch (status) {
+    public static class MallOrderStatusExtensions
+    {
+        public static string GetNewBeeMallOrderStatusEnumByStatus(int status)
+        {
+            switch (status)
+            {
                 case 0:
                     return "待支付";
                 case 1:
@@ -35,8 +40,10 @@
             }
         }
 
-        public static int Code(this MallOrderStatusEnum status) {
-            switch (status) {
+        public static int Code(this MallOrderStatusEnum status)
+        {
+            switch (status)
+            {
                 case MallOrderStatusEnum.ORDER_PRE_PAY:
                     return 0;
                 case MallOrderStatusEnum.ORDER_PAID:

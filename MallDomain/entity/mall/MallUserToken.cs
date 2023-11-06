@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mall {
-    public class MallUserToken {
+﻿namespace MallDomain.entity.mall
+{
+    public class MallUserToken
+    {
         public long UserId { get; set; }
         public string? Token { get; set; }
         public DateTime UpdateTime { get; set; }

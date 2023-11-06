@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mannage {
-    public class MallCarousel {
+﻿namespace MallDomain.entity.mannage
+{
+    public class MallCarousel
+    {
 
         public long CarouselId { get; set; }
         public string? CarouselUrl { get; set; }

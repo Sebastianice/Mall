@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.common.response {
-    public class PageResult {
+﻿namespace MallDomain.entity.common.response
+{
+    public class PageResult
+    {
         public Object? List { get; set; }
         public long TotalCount { get; set; }
         public int TotalPage { get; set; }

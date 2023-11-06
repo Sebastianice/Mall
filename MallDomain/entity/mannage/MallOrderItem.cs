@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mannage {
-    public class MallOrderItem {
+﻿namespace MallDomain.entity.mannage
+{
+    public class MallOrderItem
+    {
         public long OrderItemId { get; set; }
         public long OrderId { get; set; }
         public long GoodsId { get; set; }

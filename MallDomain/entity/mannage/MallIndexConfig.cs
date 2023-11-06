@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mannage {
-    public class MallIndexConfig {
+﻿namespace MallDomain.entity.mannage
+{
+    public class MallIndexConfig
+    {
         public long ConfigId { get; set; }
         public string? ConfigName { get; set; }
         public int ConfigType { get; set; }

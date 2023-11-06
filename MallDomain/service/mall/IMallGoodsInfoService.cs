@@ -1,7 +1,9 @@
 ﻿using MallDomain.entity.mall.response;
 
-namespace MallDomain.service.mall {
-    public interface IMallGoodsInfoService {
+namespace MallDomain.service.mall
+{
+    public interface IMallGoodsInfoService
+    {
         // MallGoodsListBySearch 商品搜索分页
         public Task<(List<GoodsSearchResponse>, long)> MallGoodsListBySearch(int pageNumber, int goodsCategoryId, string keyword, string orderBy);
 

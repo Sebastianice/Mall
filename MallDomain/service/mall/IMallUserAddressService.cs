@@ -1,8 +1,10 @@
 ﻿using MallDomain.entity.mall;
 using MallDomain.entity.mall.request;
 
-namespace MallDomain.service.mall {
-    public interface IMallUserAddressService {
+namespace MallDomain.service.mall
+{
+    public interface IMallUserAddressService
+    {
         // GetMyAddress 获取收货地址
         public Task<List<MallUserAddress>?> GetMyAddress(string token);
 

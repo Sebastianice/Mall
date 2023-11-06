@@ -1,5 +1,7 @@
-﻿namespace MallDomain.entity.mall.response {
-    public class MallUserDetailResponse {
+﻿namespace MallDomain.entity.mall.response
+{
+    public class MallUserDetailResponse
+    {
 
         public string? IntroduceSign { get; set; }
         public string? LoginName { get; set; }
