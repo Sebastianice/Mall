@@ -8,7 +8,7 @@ using MallDomain.utils;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace MallInfrastructure.service
+namespace MallInfrastructure.service.mall
 {
     public class MallOrderService : IMallOrderService
     {
@@ -26,12 +26,12 @@ namespace MallInfrastructure.service
                 SingleOrDefaultAsync();
 
             if (userToken == null) throw new Exception("不存在的用户");
-         
+
             var order = await mallContext.MallOrders
                 .SingleOrDefaultAsync(i => i.OrderNo == orderNo && i.UserId == userToken.UserId);
 
             if (order == null) throw new Exception("不存在订单");
-          
+
             order.OrderStatus = MallOrderStatusEnum.ORDER_CLOSED_BY_MALLUSER.Code();
             order.UpdateTime = DateTime.Now;
             await mallContext.SaveChangesAsync();
@@ -44,12 +44,12 @@ namespace MallInfrastructure.service
                 SingleOrDefaultAsync();
 
             if (userToken == null) throw new Exception("不存在的用户");
-           
+
             var order = await mallContext.MallOrders.
                 SingleOrDefaultAsync(i => i.OrderNo == orderNo && i.UserId == userToken.UserId);
 
             if (order == null) throw new Exception("不存在订单");
-         
+
             order.OrderStatus = MallOrderStatusEnum.ORDER_SUCCESS.Code();
             order.UpdateTime = DateTime.Now;
 
@@ -62,21 +62,21 @@ namespace MallInfrastructure.service
                SingleOrDefaultAsync(p => p.Token == token);
 
             if (userToken == null) throw new Exception("不存在的用户");
-           
+
             MallOrder? order = await mallContext.MallOrders.
                 SingleOrDefaultAsync(i => i.OrderNo == orderNo && i.UserId == userToken.UserId);
 
             if (order == null) throw new Exception("不存在订单");
-            
+
             List<MallOrderItem>? orderItems = await mallContext.MallOrderItems.
                 Where(w => w.OrderId == order.OrderId).
                 ToListAsync();
 
             if (orderItems.Count() == 0) throw new Exception("该订单项不存在");
-            
+
             List<NewBeeMallOrderItemVO> list = orderItems.Adapt<List<NewBeeMallOrderItemVO>>();
             MallOrderDetailVO? detail = order.Adapt<MallOrderDetailVO>();
-           
+
             var orderStatusStr = MallOrderStatusExtensions.
                 GetNewBeeMallOrderStatusEnumByStatus(detail.OrderStatus);
             var paystr = MallOrderStatusExtensions.
@@ -147,7 +147,7 @@ namespace MallInfrastructure.service
 
             if (order.OrderStatus == 0)
                 throw new Exception("订单状态异常");
-         
+
             order.OrderStatus = MallOrderStatusEnum.ORDER_PAID.Code();
             order.PayType = payType;
             order.PayStatus = 1;

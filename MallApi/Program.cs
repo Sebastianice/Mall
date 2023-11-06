@@ -4,8 +4,10 @@ using EntityFramework.Exceptions.MySQL;
 using MallApi.filter;
 using MallApi.middleware;
 using MallDomain.service.mall;
+using MallDomain.service.mannage;
 using MallInfrastructure;
-using MallInfrastructure.service;
+using MallInfrastructure.service.mall;
+using MallInfrastructure.service.mannage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +24,13 @@ builder.Services.AddControllers(opts =>
 
 });
 
+
+builder.Services.AddLogging(builder =>
+{
+    builder.ClearProviders();
+    builder.SetMinimumLevel(LogLevel.Debug);
+    
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
@@ -57,6 +66,10 @@ builder.Services.AddScoped<JwtSecurityTokenHandler>();
 builder.Services.AddScoped<IMallShopCartService, MallShopCartService>();
 builder.Services.AddScoped<IMallUserAddressService, MallUserAddressService>();
 builder.Services.AddScoped<IMallUserTokenService, MallUserTokenService>();
+builder.Services.AddScoped<IManageAdminUserService, ManageAdminUserService>();
+builder.Services.AddScoped<IManageAdminTokenService, ManageAdminTokenService>();
+
+
 
 builder.Services.AddMemoryCache();
 
@@ -115,14 +128,14 @@ builder.Services.AddAuthorization(builder =>
     {
         p.AddAuthenticationSchemes("UserScheme");
         p.AddRequirements(new MyAuthorizationRequirement("User"));
-     //   p.RequireRole("User");
+        //   p.RequireRole("User");
     });
 
     builder.AddPolicy("Admin", p =>
     {
         p.AddAuthenticationSchemes("AdminScheme");
         p.AddRequirements(new MyAuthorizationRequirement("Admin"));
-       // p.RequireRole("Admin");
+        // p.RequireRole("Admin");
     });
 });
 

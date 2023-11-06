@@ -4,7 +4,7 @@ namespace MallApi.middleware
 {
     public class MyAuthorizationRequirement : IAuthorizationRequirement
     {
-       public string? Role { get; }
+        public string? Role { get; }
         public MyAuthorizationRequirement(string role)
         {
             Role = role;

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace MallInfrastructure.service
+namespace MallInfrastructure.service.mall
 {
     public class MallUserTokenService : IMallUserTokenService
     {
@@ -15,17 +15,19 @@ namespace MallInfrastructure.service
             this.context = context;
         }
 
-        public async Task<bool> DeleteMallUserToken(string token)
+        public async Task DeleteMallUserToken(string token)
         {
-            var userToken = await context.MallUserTokens.Where(p => p.Token == token).SingleOrDefaultAsync();
-            if (userToken == null)
-            {
-                return false;
-            }
+            var userToken = await context.MallUserTokens.
+                Where(p => p.Token == token).
+                SingleOrDefaultAsync();
+
+
+            if (userToken == null) throw new Exception("未查询到记录");
+
             cache.Remove("user" + userToken.UserId);
-            await context.SaveChangesAsync();
+
             context.MallUserTokens.Remove(userToken);
-            return true;
+            await context.SaveChangesAsync();
         }
 
 

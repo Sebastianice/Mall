@@ -3,7 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MallApi.middleware
 {
@@ -22,13 +21,13 @@ namespace MallApi.middleware
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, MyAuthorizationRequirement requirement)
         {
-         var  token  = httpContext.HttpContext!.Request.Headers["Authorization"].ToString()[7..];
+            var token = httpContext.HttpContext!.Request.Headers["Authorization"].ToString()[7..];
 
-            string? sid =null ;
+            string? sid = null;
 
             foreach (var item in context.User.Claims)
             {
-                if(item.Type==JwtClaimTypes.Id)
+                if (item.Type == JwtClaimTypes.Id)
                 {
                     sid = item.Value;
                     break;
@@ -40,7 +39,7 @@ namespace MallApi.middleware
             {
                 if (requirement.Role == "Admin")
                 {
-                    if(cache.TryGetValue<string>($"Admin{sid}", out var v))
+                    if (cache.TryGetValue<string>($"Admin{sid}", out var v))
                     {
                         if (token == v)
                         {
@@ -49,7 +48,7 @@ namespace MallApi.middleware
                             return Task.CompletedTask;
                         }
                     }
-                 
+
                 }
             }
             else if (context.User.IsInRole("User"))
@@ -64,7 +63,7 @@ namespace MallApi.middleware
                             return Task.CompletedTask;
                         }
                     }
-                
+
                 }
             }
 

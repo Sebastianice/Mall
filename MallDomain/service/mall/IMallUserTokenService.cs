@@ -3,6 +3,6 @@
     public interface IMallUserTokenService
     {
 
-        public Task<bool> DeleteMallUserToken(string token);
+        public Task DeleteMallUserToken(string token);
     }
 }

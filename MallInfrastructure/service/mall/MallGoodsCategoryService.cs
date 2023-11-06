@@ -5,7 +5,7 @@ using MallDomain.service.mall;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace MallInfrastructure.service
+namespace MallInfrastructure.service.mall
 {
     public class MallGoodsCategoryService : IMallGoodsCategoryService
     {
@@ -13,13 +13,13 @@ namespace MallInfrastructure.service
 
         public MallGoodsCategoryService(MallContext mallContext)
         {
-            this.context = mallContext;
+            context = mallContext;
         }
 
         public async Task<List<NewBeeMallIndexCategoryVO>> GetCategoriesForIndex()
         {
 
-          //获取一级分类的固定数量的数据
+            //获取一级分类的固定数量的数据
             var firstLevelCategories =
                 await selectByLevelAndParentIdsAndNumber
                 (new List<long> { 0 },
@@ -40,7 +40,7 @@ namespace MallInfrastructure.service
 
                 //获取二级分类的数据
                 var secondLevelCategories = await selectByLevelAndParentIdsAndNumber(
-                    firstLevelIds, 
+                    firstLevelIds,
                     GoodsCategoryLevel.LevelTwo.Code(),
                     10);
 
@@ -54,10 +54,10 @@ namespace MallInfrastructure.service
 
                     //获取三级分类的数据
                     var thirdLevelCategories = await selectByLevelAndParentIdsAndNumber(
-                        secondLevelIds, 
+                        secondLevelIds,
                         GoodsCategoryLevel.LevelThree.Code(),
                         10);
-                  
+
                     if (thirdLevelCategories.Count != 0)
                     {
                         ////根据 parentId 将 thirdLevelCategories 分组
@@ -66,8 +66,8 @@ namespace MallInfrastructure.service
                         //遍历出parentid分组
                         foreach (var thirdLevelCategory in thirdLevelCategories)
                         {
-                            thirdLevelCategoryMap[thirdLevelCategory.ParentId] = new    List<MallGoodsCategory>();
-                        
+                            thirdLevelCategoryMap[thirdLevelCategory.ParentId] = new List<MallGoodsCategory>();
+
                         }
 
                         foreach (var mapk in thirdLevelCategoryMap)
@@ -125,9 +125,9 @@ namespace MallInfrastructure.service
                             {
                                 var first = item.Adapt<NewBeeMallIndexCategoryVO>();
                                 if (secondLevelCategoryMap.TryGetValue(
-                                    item.CategoryId, out var v)  && v.Count > 0)
+                                    item.CategoryId, out var v) && v.Count > 0)
                                 {
-                                    first.SecondLevelCategoryVOS =v.Adapt<List<SecondLevelCategoryVO>>();
+                                    first.SecondLevelCategoryVOS = v.Adapt<List<SecondLevelCategoryVO>>();
                                     NewBeeMallIndexCategoryVOS.Add(first);
                                 }
 
@@ -138,7 +138,7 @@ namespace MallInfrastructure.service
                 return NewBeeMallIndexCategoryVOS;
             }
             throw new Exception("查询失败");
-          
+
         }
 
 

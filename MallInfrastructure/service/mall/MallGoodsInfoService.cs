@@ -1,10 +1,11 @@
 ﻿using MallDomain.entity.mall.response;
 using MallDomain.entity.mannage;
+using MallDomain.service.mall;
 using MallInfrastructure;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace MallDomain.service.mall
+namespace MallInfrastructure.service.mall
 {
     public class MallGoodsInfoService : IMallGoodsInfoService
     {
@@ -12,7 +13,7 @@ namespace MallDomain.service.mall
 
         public MallGoodsInfoService(MallContext mallContext)
         {
-            this.context = mallContext;
+            context = mallContext;
         }
 
         public async Task<GoodsInfoDetailResponse> GetMallGoodsInfo(long id)
@@ -26,9 +27,9 @@ namespace MallDomain.service.mall
 
 
             if (info is null) throw new Exception("商品信息不存在");
-            
-            if (info.GoodsSellStatus != 0)  throw new Exception("商品已经下架");
-            
+
+            if (info.GoodsSellStatus != 0) throw new Exception("商品已经下架");
+
             var gd = info.Adapt<GoodsInfoDetailResponse>();
 
             gd.GoodsCarouselList = new List<string> {
@@ -43,11 +44,11 @@ namespace MallDomain.service.mall
             var searchList = new List<GoodsSearchResponse>();
 
             IQueryable<MallGoodsInfo>? query = context.MallGoodsInfos.AsQueryable();
-          
+
             if (!string.IsNullOrEmpty(keyword))
             {
                 query = query.Where(p =>
-                EF.Functions.Like(p.GoodsName!, $"%{keyword}%") 
+                EF.Functions.Like(p.GoodsName!, $"%{keyword}%")
                 || EF.Functions.Like(p.GoodsIntro!, $"%{keyword}%"));
             }
 
@@ -80,7 +81,7 @@ namespace MallDomain.service.mall
             int limit = 10;
             int offset = 10 * (pageNumber - 1);
 
-            var list = await 
+            var list = await
                 query.
                 Skip(offset).
                 Take(limit).

@@ -4,7 +4,7 @@ using MallDomain.service.mall;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace MallInfrastructure.service
+namespace MallInfrastructure.service.mall
 {
     public class MallUserAddressService : IMallUserAddressService
     {
@@ -12,7 +12,7 @@ namespace MallInfrastructure.service
 
         public MallUserAddressService(MallContext mallContext)
         {
-            this.context = mallContext;
+            context = mallContext;
         }
 
         public async Task DeleteUserAddress(string token, long id)
@@ -21,12 +21,12 @@ namespace MallInfrastructure.service
 
 
             if (userToken == null) throw new Exception("不存在的用户");
-        
+
             var address = await context.MallUserAddresses.
                 SingleOrDefaultAsync(w => w.UserId == userToken.UserId && w.AddressId == id);
 
             if (address == null) throw new Exception("不存在该地址");
-        
+
             address.IsDeleted = true;
             await context.SaveChangesAsync();
         }
@@ -35,13 +35,13 @@ namespace MallInfrastructure.service
         {
             var userToken = await context.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
             if (userToken == null) throw new Exception("不存在的用户");
-          
+
             var address = await context.MallUserAddresses.
                 SingleOrDefaultAsync(w => w.UserId == userToken.UserId && w.AddressId == id);
 
             if (address == null) throw new Exception("不存在该地址");
-          
-           
+
+
             return address;
         }
 
@@ -53,12 +53,12 @@ namespace MallInfrastructure.service
 
             var userToken = await context.MallUserTokens.
                 SingleOrDefaultAsync(p => p.Token == token);
-            if (userToken == null)  throw new Exception("不存在的用户");
-       
+            if (userToken == null) throw new Exception("不存在的用户");
+
             var uadress = await context.MallUserAddresses.Where(p => p.UserId == userToken.UserId && p.DefaultFlag == true).SingleOrDefaultAsync();
 
             if (uadress is null) throw new Exception("获取默认地址失败，该用户没有默认地址");
-          
+
             return uadress;
 
 

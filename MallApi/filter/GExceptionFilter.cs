@@ -7,6 +7,13 @@ namespace MallApi.filter
 {
     public class GExceptionFilter : IAsyncExceptionFilter
     {
+        private readonly ILogger<GExceptionFilter> logger;
+
+        public GExceptionFilter(ILogger<GExceptionFilter> logger)
+        {
+            this.logger = logger;
+        }
+
         public Task OnExceptionAsync(ExceptionContext context)
         {
 
@@ -18,6 +25,8 @@ namespace MallApi.filter
                     ContentType = "application/json;charset=utf-8",
                     Content = JsonConvert.SerializeObject(Result.FailWithMessage(context.Exception.Message))
                 };
+
+                logger.LogDebug(context.Exception, context.Exception.Message);
                 context.ExceptionHandled = true;
 
             }

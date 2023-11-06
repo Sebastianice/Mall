@@ -1,5 +1,4 @@
-﻿using MallApi.filter;
-using MallDomain.entity.common.response;
+﻿using MallDomain.entity.common.response;
 using MallDomain.entity.mall.request;
 using MallDomain.service.mall;
 using MallDomain.utils;
@@ -10,7 +9,7 @@ namespace MallApi.Controllers.mall
 {
     [ApiController]
     [Route("api/v1")]
- 
+
     [Authorize(policy: "User")]
     public class MallShopCartController : ControllerBase
     {
@@ -36,7 +35,7 @@ namespace MallApi.Controllers.mall
         public async Task<Result> SaveMallShoppingCartItem([FromBody] SaveCartItemParam saveCartItemParam)
         {
             var token = Request.Headers["Authorization"].ToString()[7..];
-           await mallShopCartService.SaveMallCartItem(token, saveCartItemParam);
+            await mallShopCartService.SaveMallCartItem(token, saveCartItemParam);
 
 
             return Result.OkWithMessage("添加购物车成功");

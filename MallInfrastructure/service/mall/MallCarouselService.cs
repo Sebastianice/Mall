@@ -3,14 +3,14 @@ using MallDomain.service.mall;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace MallInfrastructure.service
+namespace MallInfrastructure.service.mall
 {
     public class MallCarouselService : IMallCarouselService
     {
         private readonly MallContext context;
         public MallCarouselService(MallContext mallContext)
         {
-            this.context = mallContext;
+            context = mallContext;
         }
 
         public async Task<List<MallCarouselIndexResponse>> GetCarouselsForIndex(int num)

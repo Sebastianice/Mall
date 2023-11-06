@@ -6,17 +6,17 @@ using MallDomain.service.mall;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace MallInfrastructure.service
+namespace MallInfrastructure.service.mall
 {
     public class MallShopCartService : IMallShopCartService
     {
 
         private readonly MallContext context;
-       
+
 
         public MallShopCartService(MallContext mallContext)
         {
-            this.context = mallContext;
+            context = mallContext;
         }
 
         public async Task DeleteMallCartItem(string token, long id)
@@ -24,12 +24,12 @@ namespace MallInfrastructure.service
             MallUserToken? userToken = await context.MallUserTokens.
                 SingleOrDefaultAsync(t => t.Token == token);
             if (userToken is null) throw new Exception("不存在用户");
-      
+
             var item = context.MallShoppingCartItems.SingleOrDefault(u => u.UserId == userToken.UserId && u.CartItemId == id);
-            if (item is null)  throw new Exception("没有相应记录");
-        
+            if (item is null) throw new Exception("没有相应记录");
+
             item.IsDeleted = true;
-          
+
             await context.SaveChangesAsync();
         }
 
@@ -40,7 +40,7 @@ namespace MallInfrastructure.service
                 SingleOrDefaultAsync(t => t.Token == token);
 
             if (v is null) throw new Exception("不存在用户");
-           
+
             MallShoppingCartItem[]? shopCartItems = await context.MallShoppingCartItems.
                 Where(w => w.UserId == v.UserId && cartItemIds.Contains(w.CartItemId)).
                 AsNoTracking().
@@ -129,10 +129,10 @@ namespace MallInfrastructure.service
                     cartItem.GoodsCoverImg = value.GoodsCoverImg;
                     cartItem.SellingPrice = value.SellingPrice;
                 }
-               
+
                 cartItems.Add(cartItem);
             }
-          
+
             return cartItems;
         }
 
@@ -150,12 +150,12 @@ namespace MallInfrastructure.service
             //判断是否存在商品
             var shopItem = await context.MallShoppingCartItems.Where(w => w.UserId == userToken.UserId && w.GoodsId == req.intGoodsId).AsNoTracking().FirstOrDefaultAsync();
             if (shopItem != null) throw new Exception("商品已存在！无需重复添加");
-           
+
             var goodInfo = context.MallGoodsInfos.
                 FirstOrDefault(w => w.GoodsId == req.intGoodsId);
-            
+
             if (goodInfo == null) throw new Exception("商品为空");
-            
+
             var total = await context.MallShoppingCartItems.
                 CountAsync(w => w.UserId == userToken.UserId);
 
@@ -170,7 +170,7 @@ namespace MallInfrastructure.service
             context.MallShoppingCartItems.Add(shopCartItem);
             await context.SaveChangesAsync();
 
-            
+
 
         }
 
@@ -183,14 +183,14 @@ namespace MallInfrastructure.service
 
             var cartItem = await context.MallShoppingCartItems.
                 SingleOrDefaultAsync(u => u.CartItemId == req.CartItemId);
-            
+
             if (cartItem == null) throw new Exception("未查询到记录");
-         
-            if (userToken.UserId != cartItem.UserId)  throw new Exception("禁止该操作");
-          
+
+            if (userToken.UserId != cartItem.UserId) throw new Exception("禁止该操作");
+
             cartItem.GoodsCount = req.GoodsCount;
             cartItem.UpdateTime = DateTime.Now;
-          
+
             await context.SaveChangesAsync();
 
 

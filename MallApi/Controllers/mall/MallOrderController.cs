@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using MallApi.filter;
 using MallDomain.entity.common.response;
 using MallDomain.entity.mall.request;
 using MallDomain.service.mall;
@@ -40,7 +39,7 @@ namespace MallApi.Controllers.mall
 
             var token = Request.Headers["Authorization"].ToString()[7..];
             var list = await mallShopCartService.GetCartItemsForSettle(token, saverOrderParam.CartItemIds!);
-           
+
             if (list.Count == 0)
             {
                 return Result.FailWithMessage("无数据");

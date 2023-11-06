@@ -11,7 +11,7 @@ namespace MallApi.Controllers.mall
     {
         private readonly IMallCarouselService mallCarouselService;
         private readonly IMallIndexInfoService mallIndexInfoService;
-        
+
         public MallIndexController(IMallCarouselService mallCarouselService, IMallIndexInfoService mallIndexInfoService)
         {
             this.mallCarouselService = mallCarouselService;
@@ -21,7 +21,7 @@ namespace MallApi.Controllers.mall
         [HttpGet("index-infos")]
         public async Task<Result> MallIndexInfo()
         {
-            var mallCarouseInfo = await mallCarouselService.GetCarouselsForIndex(5);   
+            var mallCarouseInfo = await mallCarouselService.GetCarouselsForIndex(5);
             if (mallCarouseInfo.Count == 0)
             {
                 Result.FailWithMessage("获取轮播图失败");
@@ -55,7 +55,7 @@ namespace MallApi.Controllers.mall
             indexResult["hotGoodses"] = hotGoodses;
             indexResult["newGoodses"] = newGoodses;
             indexResult["recommendGoodses"] = recommendGoodses;
-           
+
             return Result.OkWithData(indexResult);
         }
     }

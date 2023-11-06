@@ -4,7 +4,7 @@ using MallDomain.service.mall;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
-namespace MallInfrastructure.service
+namespace MallInfrastructure.service.mall
 {
     public class MallIndexInfoService : IMallIndexInfoService
     {
@@ -12,7 +12,7 @@ namespace MallInfrastructure.service
 
         public MallIndexInfoService(MallContext mallContext)
         {
-            this.context = mallContext;
+            context = mallContext;
         }
         // GetConfigGoodsForIndex 首页返回相关IndexConfig
         public async Task<List<MallIndexConfigGoodsResponse>> GetConfigGoodsForIndex(int configType, int num)

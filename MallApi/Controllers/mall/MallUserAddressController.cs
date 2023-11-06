@@ -1,5 +1,4 @@
-﻿using MallApi.filter;
-using MallDomain.entity.common.response;
+﻿using MallDomain.entity.common.response;
 using MallDomain.entity.mall;
 using MallDomain.entity.mall.request;
 using MallDomain.service.mall;
@@ -10,7 +9,7 @@ namespace MallApi.Controllers.mall
 {
     [ApiController]
     [Route("api/v1")]
- 
+
     [Authorize(policy: "User")]
     public class MallUserAddressController : ControllerBase
     {
@@ -47,7 +46,7 @@ namespace MallApi.Controllers.mall
         {
             var token = Request.Headers["Authorization"].ToString()[7..];
             var addressList = await mallUserAddressService.GetMyAddress(token);
-         
+
             return Result.OkWithData(addressList);
         }
 

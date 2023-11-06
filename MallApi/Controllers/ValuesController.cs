@@ -1,7 +1,7 @@
-﻿using IdentityModel;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -28,7 +28,7 @@ namespace MallApi.Controllers
         {
             var authorization = Request.Headers["Authorization"].ToString();
             var token = authorization[7..];
-            return "User:"+token ;
+            return "User:" + token;
         }
 
         // GET api/<ValuesController>/5
@@ -39,8 +39,8 @@ namespace MallApi.Controllers
             var authorization = Request.Headers["Authorization"].ToString();
             var token = authorization[7..];
             return "Admin:" + token;
-        } 
-        
+        }
+
         [HttpGet("SignAdminToken")]
         public IActionResult SignAdminToken()
         {
@@ -81,8 +81,8 @@ namespace MallApi.Controllers
                 throw;
             }
 
-           
-        } 
+
+        }
         [HttpGet("SigntUserToken")]
         public IActionResult SigntUserToken()
         {
@@ -118,12 +118,13 @@ namespace MallApi.Controllers
                     token_type = "Bearer",
                 });
             }
-         catch(Exception ex) {
+            catch (Exception ex)
+            {
                 throw ex;
             }
-           
+
         }
 
-      
+
     }
 }
