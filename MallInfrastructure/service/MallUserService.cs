@@ -35,19 +35,15 @@ namespace MallDomain.service.mall
             throw new NotImplementedException();
         }
 
-        public async Task<MallUserDetailResponse?> GetUserDetail(string token)
+        public async Task<MallUserDetailResponse> GetUserDetail(string token)
         {
             var userToken = await context.MallUserTokens.SingleOrDefaultAsync(f => f.Token == token);
 
-            if (userToken == null)
-            {
-                return null;
-            }
-            var user = await context.MallUsers.SingleOrDefaultAsync(f => f.UserId == userToken.UserId);
-            if (user is null)
-            {
-                return null;
-            }
+            if (userToken == null) new Exception("该用户不存在");
+            
+            var user = await context.MallUsers.SingleOrDefaultAsync(f => f.UserId == userToken!.UserId);
+            if (user is null) new Exception("该用户不存在或被冻结");
+
             return user.Adapt<MallUserDetailResponse>();
         }
 
@@ -55,39 +51,39 @@ namespace MallDomain.service.mall
         public async Task RegisterUser(RegisterUserParam req)
         {
 
-            var mu = await context.MallUsers.Where(r => r.LoginName == req.LoginName).FirstOrDefaultAsync();
+            var mu = await context.MallUsers.
+                Where(r => r.LoginName == req.LoginName).
+                FirstOrDefaultAsync();
 
             if (mu is null)
             {
-
-
                 MallUser user = new();
                 user.LoginName = req.LoginName;
 
                 user.PasswordMd5 = req.Password.GetMD5();
                 context.MallUsers.Add(user);
                 await context.SaveChangesAsync();
-
-
+             
             }
             else
             {
                 throw new Exception("用户名重复");
             }
 
-
-
-
-
         }
 
         public async Task<bool> UpdateUserInfo(string token, UpdateUserInfoParam req)
         {
-            var userToken = await context.MallUserTokens.SingleOrDefaultAsync(f => f.Token == token);
-            if (userToken == null) return false;
-            var user = await context.MallUsers.SingleOrDefaultAsync(f => f.UserId == userToken.UserId);
+            var userToken = await context.MallUserTokens.
+                SingleOrDefaultAsync(f => f.Token == token);
+           
+            if (userToken == null) throw new Exception("该用户不存在");
+            
+            var user = await context.MallUsers.
+                SingleOrDefaultAsync(f => f.UserId == userToken.UserId);
 
             if (user == null) return false;
+
             user.PasswordMd5 = req.PasswordMd5;
             user.NickName = req.NickName;
             user.IntroduceSign = req.IntroduceSign;
@@ -104,12 +100,14 @@ namespace MallDomain.service.mall
             var sign = configuration["UserToken:sign"]; //签名凭证
 
 
-            var us = await context.MallUsers.Where(p => p.LoginName == param.LoginName && p.PasswordMd5 == param.PasswordMd5).SingleAsync();//失败则异常，由异常处理器处理
-
-            //查询是否存在token
-
-
-            //没有就新建，存在就覆盖，签发新token               
+            var us = await context.MallUsers.
+                Where(p => p.LoginName == param.LoginName && p.PasswordMd5 == param.PasswordMd5).SingleOrDefaultAsync();
+           
+            //失败则异常，由异常处理器处理
+            if (us is null) throw new Exception("用户名或密码不对");
+          
+            
+                      
             //签发token
             var identity = new Claim[] {
                 new Claim(JwtClaimTypes.Name, us.LoginName!),
@@ -131,7 +129,14 @@ namespace MallDomain.service.mall
 
             var token = jwtHandler.WriteToken(jwtoken);
 
-            var oldtoken = await context.MallUserTokens.Where(s => s.UserId == us.UserId).SingleOrDefaultAsync();
+            
+            //查询是否存在token
+            //没有就新建，存在就覆盖，签发新token    
+            var oldtoken = await context.MallUserTokens.
+                Where(s => s.UserId == us.UserId).
+                SingleOrDefaultAsync();
+
+
             if (oldtoken == null)
             {
                 oldtoken = new MallUserToken
@@ -145,14 +150,15 @@ namespace MallDomain.service.mall
             }
             else
             {
-                oldtoken.ExpireTime = exp;
+                oldtoken.ExpireTime = exp.ToUniversalTime();
                 oldtoken.Token = token;
-                oldtoken.UpdateTime = nbf;
+                oldtoken.UpdateTime = nbf.ToUniversalTime();
             }
 
+          
             await context.SaveChangesAsync();
 
-            cache.Set("user" + oldtoken.UserId, token);
+            cache.Set("User" + oldtoken.UserId, token);
 
             return oldtoken;
 

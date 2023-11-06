@@ -19,14 +19,13 @@ namespace MallApi.Controllers.mall
 
         [HttpGet("search")]
         public async Task<Result> GoodsSearch(
-           [FromQuery] int pageNumber, [FromQuery] int goodsCategoryId, [FromQuery] string keyword, [FromQuery] string orderBy
-            )
+           int pageNumber, int goodsCategoryId,  string keyword, string orderBy)
         {
-            (var list, var total) = await mallGoodsInfoService.MallGoodsListBySearch(pageNumber, goodsCategoryId, keyword, orderBy);
-            if (list.Count == 0)
-            {
-                return Result.FailWithMessage("获取失败");
-            }
+            (var list, var total) = await mallGoodsInfoService.MallGoodsListBySearch
+                (pageNumber, goodsCategoryId, keyword, orderBy);
+           
+           
+            
             return Result.OkWithDetailed(new PageResult()
             {
                 List = list,
@@ -36,14 +35,12 @@ namespace MallApi.Controllers.mall
                 TotalPage = (int)Math.Ceiling(total / 10.0),
             }, "获取成功");
         }
+
+
         [HttpGet("goods/detail/{id}")]
         public async Task<Result> GoodsDetail(long id)
         {
             var data = await mallGoodsInfoService.GetMallGoodsInfo(id);
-            if (data is null)
-            {
-                return Result.FailWithMessage("获取数据失败");
-            }
 
             return Result.OkWithData(data);
         }

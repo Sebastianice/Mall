@@ -7,7 +7,7 @@ namespace MallDomain.service.mall
     {
         // GetMyShoppingCartItems 不分页
         public Task<List<CartItemResponse>> GetMyShoppingCartItems(string token);
-        public Task<bool> SaveMallCartItem(string token, SaveCartItemParam req);
+        public Task SaveMallCartItem(string token, SaveCartItemParam req);
         public Task UpdateMallCartItem(string token, UpdateCartItemParam req);
 
         public Task DeleteMallCartItem(string token, long id);

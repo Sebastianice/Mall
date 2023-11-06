@@ -11,7 +11,7 @@ namespace MallDomain.service.mall
         public Task RegisterUser(RegisterUserParam req);
         public Task<bool> UpdateUserInfo(string token, UpdateUserInfoParam req);
 
-        public Task<MallUserDetailResponse?> GetUserDetail(string token);
+        public Task<MallUserDetailResponse> GetUserDetail(string token);
 
         public Task<MallUserToken> UserLogin(UserLoginParam param);
 

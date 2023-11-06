@@ -18,16 +18,15 @@ namespace MallInfrastructure.service
         public async Task DeleteUserAddress(string token, long id)
         {
             var userToken = await context.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
-            if (userToken == null)
-            {
-                throw new Exception("不存在的用户");
-            }
-            var address = await context.MallUserAddresses.SingleOrDefaultAsync(w => w.UserId == userToken.UserId && w.AddressId == id);
 
-            if (address == null)
-            {
-                throw new Exception("不存在该地址");
-            }
+
+            if (userToken == null) throw new Exception("不存在的用户");
+        
+            var address = await context.MallUserAddresses.
+                SingleOrDefaultAsync(w => w.UserId == userToken.UserId && w.AddressId == id);
+
+            if (address == null) throw new Exception("不存在该地址");
+        
             address.IsDeleted = true;
             await context.SaveChangesAsync();
         }
@@ -35,17 +34,14 @@ namespace MallInfrastructure.service
         public async Task<MallUserAddress> GetMallUserAddressById(string token, long id)
         {
             var userToken = await context.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
-            if (userToken == null)
-            {
-                throw new Exception("不存在的用户");
-            }
-            var address = await context.MallUserAddresses.SingleOrDefaultAsync(w => w.UserId == userToken.UserId && w.AddressId == id);
+            if (userToken == null) throw new Exception("不存在的用户");
+          
+            var address = await context.MallUserAddresses.
+                SingleOrDefaultAsync(w => w.UserId == userToken.UserId && w.AddressId == id);
 
-            if (address == null)
-            {
-                throw new Exception("不存在该地址");
-            }
-            //address.IsDeleted = true;
+            if (address == null) throw new Exception("不存在该地址");
+          
+           
             return address;
         }
 
@@ -55,33 +51,31 @@ namespace MallInfrastructure.service
         {
 
 
-            var userToken = await context.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
-            if (userToken == null)
-            {
-                throw new Exception("不存在的用户");
-            }
-
+            var userToken = await context.MallUserTokens.
+                SingleOrDefaultAsync(p => p.Token == token);
+            if (userToken == null)  throw new Exception("不存在的用户");
+       
             var uadress = await context.MallUserAddresses.Where(p => p.UserId == userToken.UserId && p.DefaultFlag == true).SingleOrDefaultAsync();
-            if (uadress is null)
-            {
-                return null;
-            }
 
-
+            if (uadress is null) throw new Exception("获取默认地址失败，该用户没有默认地址");
+          
             return uadress;
 
 
         }
 
-        public async Task<List<MallUserAddress>?> GetMyAddress(string token)
+        public async Task<List<MallUserAddress>> GetMyAddress(string token)
         {
 
-            var userToken = await context.MallUserTokens.SingleOrDefaultAsync(p => p.Token == token);
-            if (userToken is null)
-            {
-                return null;
-            }
-            var list = await context.MallUserAddresses.Where(s => s.UserId == userToken.UserId).AsNoTracking().ToListAsync();
+            var userToken = await context.MallUserTokens.
+                SingleOrDefaultAsync(p => p.Token == token);
+
+            if (userToken is null) throw new Exception("该用户不存在");
+
+            var list = await context.MallUserAddresses.
+                Where(s => s.UserId == userToken.UserId).
+                AsNoTracking().
+                ToListAsync();
 
             return list;
 

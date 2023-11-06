@@ -12,14 +12,14 @@ namespace MallApi.Controllers.mall
 
     [ApiController]
     [Route("api/v1")]
-    [ServiceFilter(typeof(TokenFilter))]
-    [Authorize(policy: "UserPolicy")]
+    [Authorize(policy: "User")]
     public class MallOrderController : ControllerBase
     {
 
         private readonly IMallShopCartService mallShopCartService;
         private readonly IMallUserAddressService mallUserAddressService;
         private readonly IMallOrderService mallOrderService;
+
         public MallOrderController(IMallShopCartService mallShopCartService, IMallUserAddressService uas, IMallOrderService ms)
         {
             this.mallShopCartService = mallShopCartService;
@@ -30,16 +30,17 @@ namespace MallApi.Controllers.mall
         [HttpPost("saveOrder")]
         public async Task<Result> SaveOrder([FromBody] SaveOrderParam saverOrderParam)
         {
-
-
             IValidator<SaveOrderParam> validator = ValidatorFactory.CreateValidator(saverOrderParam)!;
             var vResult = await validator.ValidateAsync(saverOrderParam);
+
             if (!vResult.IsValid)
             {
                 return Result.FailWithMessage(vResult.Errors.ToString()!);
             }
+
             var token = Request.Headers["Authorization"].ToString()[7..];
             var list = await mallShopCartService.GetCartItemsForSettle(token, saverOrderParam.CartItemIds!);
+           
             if (list.Count == 0)
             {
                 return Result.FailWithMessage("无数据");
@@ -57,6 +58,7 @@ namespace MallApi.Controllers.mall
             await mallOrderService.PaySuccess(orderNo, payType);
             return Result.OkWithMessage("订单支付成功");
         }
+
         [HttpPut("order/{orderNo}/finish")]
         public async Task<Result> FinishOrder(string orderNo)
         {
@@ -64,6 +66,8 @@ namespace MallApi.Controllers.mall
             await mallOrderService.FinishOrder(token, orderNo);
             return Result.OkWithMessage("订单完成");
         }
+
+
         [HttpPut("order/{orderNo}/cancel")]
         public async Task<Result> CancelOrder(string orderNo)
         {
@@ -87,7 +91,9 @@ namespace MallApi.Controllers.mall
             {
                 pageNumber = 1;
             }
+
             var (list, total) = await mallOrderService.MallOrderListBySearch(token, pageNumber, status);
+
             return Result.OkWithData(new PageResult()
             {
                 PageSize = 5,

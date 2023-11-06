@@ -11,7 +11,7 @@ namespace MallApi.Controllers.mall
     [ApiController]
     [Route("api/v1")]
 
-    [Authorize(policy: "UserPolicy")]
+    [Authorize(policy: "User")]
     public class MallUserController : ControllerBase
     {
         private readonly IMallUserService mallUserService;
@@ -21,7 +21,9 @@ namespace MallApi.Controllers.mall
             this.mallUserService = mallUserService;
             this.mallUserTokenService = mallUserTokenService;
         }
-        [ServiceFilter(typeof(TokenFilter))]
+
+
+      
         [HttpPut("user/info")]
         public async Task<Result> UserInfoUpdate([FromBody] UpdateUserInfoParam up)
         {
@@ -35,7 +37,7 @@ namespace MallApi.Controllers.mall
 
             return Result.OkWithMessage("更新用户数据成功");
         }
-        [ServiceFilter(typeof(TokenFilter))]
+     
         [HttpGet("user/info")]
         public async Task<Result> GetUserInfo()
         {
@@ -48,7 +50,7 @@ namespace MallApi.Controllers.mall
 
             return Result.OkWithData(rep);
         }
-        [ServiceFilter(typeof(TokenFilter))]
+   
         [HttpPost("user/logout")]
         public async Task<Result> UserLogout()
         {
@@ -64,11 +66,7 @@ namespace MallApi.Controllers.mall
         [HttpPost("user/register")]
         public async Task<Result> UserRegister([FromBody] RegisterUserParam registerUser)
         {
-            if (registerUser is null)
-            {
-
-                return Result.FailWithMessage("对象为null");
-            }
+           
             var vr = await ValidatorFactory.CreateValidator
  (registerUser)!.ValidateAsync(registerUser);
             if (!vr.IsValid)
@@ -84,16 +82,13 @@ namespace MallApi.Controllers.mall
         [HttpPost("user/login")]
         public async Task<Result> UserLogin([FromBody] UserLoginParam userLoginParam)
         {
-            if (userLoginParam is null)
-            {
-
-                return Result.FailWithMessage("对象为null");
-            }
+           
             var vr = await ValidatorFactory.CreateValidator
  (userLoginParam)!.ValidateAsync(userLoginParam);
             if (!vr.IsValid)
             {
-                return Result.FailWithMessage(vr.Errors.ToString()!);
+                var msg = string.Join(";", vr.Errors.Select(s => s.ErrorMessage));
+                return Result.FailWithMessage(msg);
             }
 
 

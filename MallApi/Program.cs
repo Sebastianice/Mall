@@ -2,14 +2,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using EntityFramework.Exceptions.MySQL;
 using MallApi.filter;
+using MallApi.middleware;
 using MallDomain.service.mall;
 using MallInfrastructure;
 using MallInfrastructure.service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+
+#region 服务注册
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(opts =>
@@ -17,10 +21,9 @@ builder.Services.AddControllers(opts =>
     opts.Filters.Add(typeof(GExceptionFilter));
 
 });
-//使用servicefilter有参注入tokenfilter
-builder.Services.AddScoped(typeof(TokenFilter));
 
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(g =>
 {
@@ -43,35 +46,32 @@ builder.Services.AddSwaggerGen(g =>
     g.AddSecurityRequirement(requirement);
 });
 
-
-var con = builder.Configuration["Mysql:ConnectString"];
-var vs = builder.Configuration["MySql:Version"]!;
-
+builder.Services.AddScoped<IAuthorizationHandler, MyAuthorizationHandler>();
 builder.Services.AddScoped<IMallGoodsCategoryService, MallGoodsCategoryService>();
 builder.Services.AddScoped<IMallGoodsInfoService, MallGoodsInfoService>();
 builder.Services.AddScoped<IMallCarouselService, MallCarouselService>();
 builder.Services.AddScoped<IMallIndexInfoService, MallIndexInfoService>();
 builder.Services.AddScoped<IMallOrderService, MallOrderService>();
 builder.Services.AddScoped<IMallUserService, MallUserService>();
-builder.Services.AddSingleton<JwtSecurityTokenHandler>();
+builder.Services.AddScoped<JwtSecurityTokenHandler>();
 builder.Services.AddScoped<IMallShopCartService, MallShopCartService>();
 builder.Services.AddScoped<IMallUserAddressService, MallUserAddressService>();
 builder.Services.AddScoped<IMallUserTokenService, MallUserTokenService>();
 
-
 builder.Services.AddMemoryCache();
+
+
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer("UserScheme", o =>
+}).AddJwtBearer("AdminScheme", o =>
 {
-    var Issurer = builder.Configuration["UserToken:iss"];  //发行人
-    var Audience = builder.Configuration["UserToken:aud"];       //受众人
-    var secretCredentials = builder.Configuration["UserToken:sign"];
+    var Issurer = builder.Configuration["AdminToken:iss"];  //发行人
+    var Audience = builder.Configuration["AdminToken:aud"];       //受众人
+    var secretCredentials = builder.Configuration["AdminToken:sign"];
     o.TokenValidationParameters = new TokenValidationParameters
     {
-
         //是否验证发行人
         ValidateIssuer = true,
         ValidIssuer = Issurer,//发行人
@@ -85,12 +85,12 @@ builder.Services.AddAuthentication(x =>
         ValidateLifetime = true, //验证生命周期
         RequireExpirationTime = true, //过期时间
     };
-}).AddJwtBearer("AdminScheme", o =>
-{
 
-    var Issurer = builder.Configuration["AdminToken:iss"];  //发行人
-    var Audience = builder.Configuration["AdminToken:aud"];       //受众人
-    var secretCredentials = builder.Configuration["AdminToken:sign"];
+}).AddJwtBearer("UserScheme", o =>
+{
+    var Issurer = builder.Configuration["UserToken:iss"];  //发行人
+    var Audience = builder.Configuration["UserToken:aud"];       //受众人
+    var secretCredentials = builder.Configuration["UserToken:sign"];
     o.TokenValidationParameters = new TokenValidationParameters
     {
         //是否验证发行人
@@ -111,24 +111,28 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddAuthorization(builder =>
 {
-    builder.AddPolicy("UserPolicy", p =>
+    builder.AddPolicy("User", p =>
     {
-
         p.AddAuthenticationSchemes("UserScheme");
-        p.RequireRole("User");
-
+        p.AddRequirements(new MyAuthorizationRequirement("User"));
+     //   p.RequireRole("User");
     });
-    builder.AddPolicy("AdminPolicy", p =>
+
+    builder.AddPolicy("Admin", p =>
     {
         p.AddAuthenticationSchemes("AdminScheme");
-        p.RequireRole("Admin");
+        p.AddRequirements(new MyAuthorizationRequirement("Admin"));
+       // p.RequireRole("Admin");
     });
 });
 
+
 builder.Services.AddDbContext<MallContext>(p =>
 {
-
+    var con = builder.Configuration["Mysql:ConnectString"];
+    var vs = builder.Configuration["MySql:Version"]!;
     var version = new MySqlServerVersion(new Version(vs));
+
     p.UseMySql(con, version);
     p.UseExceptionProcessor();
     p.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
@@ -137,7 +141,9 @@ builder.Services.AddDbContext<MallContext>(p =>
 
 
 
+#endregion
 
+#region 中间件
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -153,3 +159,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+#endregion

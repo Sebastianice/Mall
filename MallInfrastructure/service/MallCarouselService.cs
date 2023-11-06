@@ -16,8 +16,10 @@ namespace MallInfrastructure.service
         public async Task<List<MallCarouselIndexResponse>> GetCarouselsForIndex(int num)
         {
             var list = new List<MallCarouselIndexResponse>();
-            var records = await context.MallCarousels.OrderByDescending(p => p.CarouselRank).Take(num)
-                 .ToListAsync();
+            var records = await context.MallCarousels.
+                OrderByDescending(p => p.CarouselRank).
+                Take(num).
+                ToListAsync();
 
             foreach (var item in records)
             {

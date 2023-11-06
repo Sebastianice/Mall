@@ -10,8 +10,8 @@ namespace MallApi.Controllers.mall
 {
     [ApiController]
     [Route("api/v1")]
-    [ServiceFilter(typeof(TokenFilter))]
-    [Authorize(policy: "UserPolicy")]
+ 
+    [Authorize(policy: "User")]
     public class MallShopCartController : ControllerBase
     {
         private readonly IMallShopCartService mallShopCartService;
@@ -36,14 +36,13 @@ namespace MallApi.Controllers.mall
         public async Task<Result> SaveMallShoppingCartItem([FromBody] SaveCartItemParam saveCartItemParam)
         {
             var token = Request.Headers["Authorization"].ToString()[7..];
-            var flag = await mallShopCartService.SaveMallCartItem(token, saveCartItemParam);
-            if (!flag)
-            {
-                return Result.FailWithMessage("添加购物车失败");
-            }
+           await mallShopCartService.SaveMallCartItem(token, saveCartItemParam);
+
 
             return Result.OkWithMessage("添加购物车成功");
         }
+
+
         [HttpPut("shop-cart")]
         public async Task<Result> UpdateMallShoppingCartItem([FromBody] UpdateCartItemParam req)
         {
@@ -51,6 +50,8 @@ namespace MallApi.Controllers.mall
             await mallShopCartService.UpdateMallCartItem(token, req);
             return Result.OkWithMessage("修改购物车成功");
         }
+
+
         [HttpDelete("shop-cart/{newBeeMallShoppingCartItemId}")]
         public async Task<Result> DelMallShoppingCartItem(long shoppingCartItemId)
         {
@@ -58,6 +59,8 @@ namespace MallApi.Controllers.mall
             await mallShopCartService.DeleteMallCartItem(token, shoppingCartItemId);
             return Result.OkWithMessage("删除成功");
         }
+
+
         [HttpGet("shop-cart/settle")]
         public async Task<Result> ToSettle([FromQuery] string cartItemId)
         {
