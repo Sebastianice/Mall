@@ -19,7 +19,7 @@ namespace MallApi.Controllers.mall
 
         [HttpGet("search")]
         public async Task<Result> GoodsSearch(
-           int pageNumber, int goodsCategoryId, string keyword, string orderBy)
+          [FromQuery] int pageNumber, [FromQuery] int goodsCategoryId, [FromQuery] string? keyword="", [FromQuery] string? orderBy="")
         {
             (var list, var total) = await mallGoodsInfoService.MallGoodsListBySearch
                 (pageNumber, goodsCategoryId, keyword, orderBy);

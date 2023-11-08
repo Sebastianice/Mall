@@ -29,7 +29,7 @@ builder.Services.AddLogging(builder =>
 {
     builder.ClearProviders();
     builder.SetMinimumLevel(LogLevel.Debug);
-    
+
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -71,8 +71,19 @@ builder.Services.AddScoped<IManageAdminTokenService, ManageAdminTokenService>();
 
 
 
-builder.Services.AddMemoryCache();
+//builder.Services.AddMemoryCache();
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("local", p =>
+    {
+        p.WithOrigins(new string[] { "http://localhost:8080" })
+       .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+       
 
+    });
+});
 
 builder.Services.AddAuthentication(x =>
 {
@@ -149,6 +160,7 @@ builder.Services.AddDbContext<MallContext>(p =>
     p.UseMySql(con, version);
     p.UseExceptionProcessor();
     p.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
+    p.EnableSensitiveDataLogging();
 });
 
 
@@ -165,6 +177,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAuthenFailHandling();
+app.UseRouting();
+app.UseCors("local");
+
+
 app.UseAuthentication();
 app.UseAuthorization();
 

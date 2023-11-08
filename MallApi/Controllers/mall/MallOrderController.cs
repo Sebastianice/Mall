@@ -37,7 +37,7 @@ namespace MallApi.Controllers.mall
                 return Result.FailWithMessage(vResult.Errors.ToString()!);
             }
 
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             var list = await mallShopCartService.GetCartItemsForSettle(token, saverOrderParam.CartItemIds!);
 
             if (list.Count == 0)
@@ -52,7 +52,7 @@ namespace MallApi.Controllers.mall
         }
         [HttpGet("paySuccess")]
         public async Task<Result> PaySuccess([FromQuery] string orderNo
-            , [FromQuery] int payType)
+            , [FromQuery] sbyte payType)
         {
             await mallOrderService.PaySuccess(orderNo, payType);
             return Result.OkWithMessage("订单支付成功");
@@ -61,7 +61,7 @@ namespace MallApi.Controllers.mall
         [HttpPut("order/{orderNo}/finish")]
         public async Task<Result> FinishOrder(string orderNo)
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             await mallOrderService.FinishOrder(token, orderNo);
             return Result.OkWithMessage("订单完成");
         }
@@ -70,22 +70,22 @@ namespace MallApi.Controllers.mall
         [HttpPut("order/{orderNo}/cancel")]
         public async Task<Result> CancelOrder(string orderNo)
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             await mallOrderService.CancelOrder(token, orderNo);
             return Result.OkWithMessage("订单取消成功");
         }
         [HttpGet("order/{orderNo}")]
         public async Task<Result> OrderDetailPage(string orderNo)
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             var detail = await mallOrderService.GetOrderDetailByOrderNo(token, orderNo);
             return Result.OkWithData(detail);
 
         }
         [HttpGet("order")]
-        public async Task<Result> OrderList([FromQuery] string orderNo, [FromQuery] int pageNumber, [FromQuery] string status)
+        public async Task<Result> OrderList( [FromQuery] int pageNumber, [FromQuery] string? status="")
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             if (pageNumber <= 0)
             {
                 pageNumber = 1;

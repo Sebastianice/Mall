@@ -6,10 +6,10 @@ namespace MallDomain.service.mall
     public interface IMallOrderService
     {
         // SaveOrder 保存订单
-        public Task<string> SaveOrder(string token, MallUserAddress userAddress, List<CartItemResponse> myShoppingCartItems);
+        public Task<string> SaveOrder(string token, UserAddress userAddress, List<CartItemResponse> myShoppingCartItems);
 
         // PaySuccess 支付订单
-        public Task PaySuccess(string orderNo, int payType);
+        public Task PaySuccess(string orderNo, sbyte payType);
 
         // FinishOrder 完结订单
         public Task FinishOrder(string token, string orderNo);

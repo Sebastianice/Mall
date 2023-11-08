@@ -26,8 +26,8 @@ namespace MallApi.Controllers
         [Authorize(policy: "User")]
         public string UserGet()
         {
-            var authorization = Request.Headers["Authorization"].ToString();
-            var token = authorization[7..];
+            var token = Request.Headers["Authorization"].ToString();
+           
             return "User:" + token;
         }
 
@@ -37,8 +37,8 @@ namespace MallApi.Controllers
         public string AdminGet()
         {
             var authorization = Request.Headers["Authorization"].ToString();
-            var token = authorization[7..];
-            return "Admin:" + token;
+        
+            return "Admin:" + authorization;
         }
 
         [HttpGet("SignAdminToken")]

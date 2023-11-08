@@ -42,7 +42,7 @@ namespace MallInfrastructure.service.mall
                 var secondLevelCategories = await selectByLevelAndParentIdsAndNumber(
                     firstLevelIds,
                     GoodsCategoryLevel.LevelTwo.Code(),
-                    10);
+                    0);
 
                 if (secondLevelCategories.Count != 0)
                 {
@@ -56,17 +56,17 @@ namespace MallInfrastructure.service.mall
                     var thirdLevelCategories = await selectByLevelAndParentIdsAndNumber(
                         secondLevelIds,
                         GoodsCategoryLevel.LevelThree.Code(),
-                        10);
+                        0);
 
                     if (thirdLevelCategories.Count != 0)
                     {
                         ////根据 parentId 将 thirdLevelCategories 分组
-                        var thirdLevelCategoryMap = new Dictionary<long, List<MallGoodsCategory>>();
+                        var thirdLevelCategoryMap = new Dictionary<long, List<GoodsCategory>>();
 
                         //遍历出parentid分组
                         foreach (var thirdLevelCategory in thirdLevelCategories)
                         {
-                            thirdLevelCategoryMap[thirdLevelCategory.ParentId] = new List<MallGoodsCategory>();
+                            thirdLevelCategoryMap[thirdLevelCategory.ParentId] = new List<GoodsCategory>();
 
                         }
 
@@ -84,7 +84,7 @@ namespace MallInfrastructure.service.mall
 
                         var secondLevelCategoryVOS = new List<SecondLevelCategoryVO>();
                         //处理二级分类
-                        foreach (MallGoodsCategory cg in secondLevelCategories)
+                        foreach (GoodsCategory cg in secondLevelCategories)
                         {
                             SecondLevelCategoryVO? secondLevelCategoryVO = cg.Adapt<SecondLevelCategoryVO>();
                             //如果该二级分类下有数据则放入 secondLevelCategoryVOS 对象中
@@ -143,12 +143,24 @@ namespace MallInfrastructure.service.mall
 
 
 
-        async Task<List<MallGoodsCategory>> selectByLevelAndParentIdsAndNumber(List<long> ids, int level, int limit)
+        async Task<List<GoodsCategory>> selectByLevelAndParentIdsAndNumber(List<long> ids, int level, int limit)
         {
-            return await context.MallGoodsCategories.Where(p => ids.Contains(p.ParentId)).Where(p => p.CategoryLevel == level)
-                .OrderByDescending(p => p.CategoryRank)
-                .Take(limit)
-                .ToListAsync();
+           
+            if (limit != 0)
+            {
+                return await context.GoodsCategories
+               .Where(p => ids.Contains(p.ParentId) && p.CategoryLevel == level)
+               .OrderByDescending(p => p.CategoryRank)
+               .AsNoTracking()
+               .Take(limit)
+               .ToListAsync();
+            }
+            return await context.GoodsCategories
+              .Where(p => ids.Contains(p.ParentId) && p.CategoryLevel == level)
+              .OrderByDescending(p => p.CategoryRank)
+              .AsNoTracking()
+              .ToListAsync();
+
         }
 
     }

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using MallDomain.entity.mannage.request;
 
 namespace MallDomain.utils
 {
-    public class MallAdminParamValidator: AbstractValidator<MallAdminParam>
+    public class MallAdminParamValidator : AbstractValidator<MallAdminParam>
     {
         public MallAdminParamValidator()
         {

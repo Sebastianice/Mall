@@ -26,7 +26,7 @@ namespace MallApi.Controllers.mall
         [HttpPut("user/info")]
         public async Task<Result> UserInfoUpdate([FromBody] UpdateUserInfoParam up)
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
 
             await mallUserService.UpdateUserInfo(token, up);
 
@@ -37,10 +37,10 @@ namespace MallApi.Controllers.mall
         [HttpGet("user/info")]
         public async Task<Result> GetUserInfo()
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
-           
+            var token = Request.Headers["Authorization"];
+
             var rep = await mallUserService.GetUserDetail(token);
-         
+
 
             return Result.OkWithData(rep);
         }
@@ -48,7 +48,7 @@ namespace MallApi.Controllers.mall
         [HttpPost("user/logout")]
         public async Task<Result> UserLogout()
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
 
             await mallUserTokenService.DeleteMallUserToken(token);
 
@@ -77,27 +77,27 @@ namespace MallApi.Controllers.mall
         public async Task<Result> UserLogin([FromBody] UserLoginParam userLoginParam)
         {
 
-            var vr =await ValidatorFactory.
+            var vr = await ValidatorFactory.
                            CreateValidator(userLoginParam)!.
                            ValidateAsync(userLoginParam);
-           
-           
+
+
             if (!vr.IsValid)
             {
-                var msg = 
+                var msg =
                         string.
                         Join(";", vr.
                                        Errors.
                                        Select(s => s.ErrorMessage));
-              
-           
+
+
                 return Result.FailWithMessage(msg);
             }
 
 
             var mallUserToken = await mallUserService.UserLogin(userLoginParam);
-           
-            return Result.OkWithDetailed(mallUserToken, "登录成功");
+
+            return Result.OkWithData(mallUserToken.Token);
         }
     }
 }

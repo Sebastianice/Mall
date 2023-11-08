@@ -3,7 +3,7 @@ using MallDomain.entity.mannage.request;
 
 namespace MallDomain.utils
 {
-    public class MallAdminLoginParamValidator: AbstractValidator<MallAdminLoginParam>
+    public class MallAdminLoginParamValidator : AbstractValidator<MallAdminLoginParam>
     {
         public MallAdminLoginParamValidator()
         {

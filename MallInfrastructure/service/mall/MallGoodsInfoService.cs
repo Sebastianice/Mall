@@ -1,7 +1,6 @@
 ﻿using MallDomain.entity.mall.response;
 using MallDomain.entity.mannage;
 using MallDomain.service.mall;
-using MallInfrastructure;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +20,7 @@ namespace MallInfrastructure.service.mall
 
             var info = await
                 context.
-                MallGoodsInfos.
+                GoodsInfos.
                 AsNoTracking().
                 FirstAsync(p => p.GoodsId == id);
 
@@ -43,7 +42,7 @@ namespace MallInfrastructure.service.mall
         {
             var searchList = new List<GoodsSearchResponse>();
 
-            IQueryable<MallGoodsInfo>? query = context.MallGoodsInfos.AsQueryable();
+            IQueryable<GoodsInfo>? query = context.GoodsInfos.AsQueryable();
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -60,6 +59,7 @@ namespace MallInfrastructure.service.mall
             int count = query.Count();
 
             if (count == 0) throw new Exception("查询失败，未查到数据");
+           
             switch (orderBy)
             {
                 case "new":
@@ -68,6 +68,7 @@ namespace MallInfrastructure.service.mall
                 case "price":
                     query = query.OrderBy(q => q.SellingPrice);
                     break;
+              
                 default:
                     query = query.OrderByDescending(q => q.StockNum);
                     break;

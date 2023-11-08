@@ -2,14 +2,14 @@
 {
     public class Result
     {
-        public ResultCode Code { get; set; }
+        public Code ResultCode { get; set; }
         public Object? Data { get; set; }
         public string? Message { get; set; }
         public static Result Ok()
         {
             return new Result()
             {
-                Code = ResultCode.SUCCESS,
+                ResultCode = Code.SUCCESS,
                 Message = "操作成功"
             };
         }
@@ -17,7 +17,7 @@
         {
             return new Result()
             {
-                Code = ResultCode.SUCCESS,
+                ResultCode = Code.SUCCESS,
                 Message = message
             };
         }
@@ -25,7 +25,7 @@
         {
             return new Result()
             {
-                Code = ResultCode.SUCCESS,
+                ResultCode = Code.SUCCESS,
                 Message = "SUCCESS",
                 Data = data
             };
@@ -34,7 +34,7 @@
         {
             return new Result()
             {
-                Code = ResultCode.SUCCESS,
+                ResultCode = Code.SUCCESS,
                 Message = message,
                 Data = data
             };
@@ -43,7 +43,7 @@
         {
             return new Result()
             {
-                Code = ResultCode.ERROR,
+                ResultCode = Code.ERROR,
                 Message = "操作失败"
             };
         }
@@ -51,7 +51,7 @@
         {
             return new Result()
             {
-                Code = ResultCode.ERROR,
+                ResultCode = Code.ERROR,
                 Message = message
             };
         }
@@ -59,7 +59,7 @@
         {
             return new Result()
             {
-                Code = ResultCode.ERROR,
+                ResultCode = Code.ERROR,
                 Message = message
             };
         }
@@ -67,7 +67,7 @@
         {
             return new Result()
             {
-                Code = ResultCode.UNLOGIN,
+                ResultCode = Code.UNLOGIN,
                 Data = data,
                 Message = "未登录"
             };
@@ -77,7 +77,7 @@
 
     }
 
-    public enum ResultCode
+    public enum Code
     {
         ERROR = 500,
 

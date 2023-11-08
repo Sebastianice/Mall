@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace MallApi.filter
 {
@@ -19,18 +20,29 @@ namespace MallApi.filter
 
             if (!context.ExceptionHandled)
             {
+
+               
                 context.Result = new ContentResult()
                 {
-                    StatusCode = 500,
+                    StatusCode = 200,
                     ContentType = "application/json;charset=utf-8",
-                    Content = JsonConvert.SerializeObject(Result.FailWithMessage(context.Exception.Message))
-                };
 
-                logger.LogDebug(context.Exception, context.Exception.Message);
-                context.ExceptionHandled = true;
 
-            }
+                    Content = JsonConvert.SerializeObject
+                   (Result.FailWithDetailed("", context.Exception.Message),
+                   new JsonSerializerSettings
+                   {
+                       ContractResolver = new CamelCasePropertyNamesContractResolver()
+                   })
+            };
+
+
+
+            logger.LogDebug(context.Exception, context.Exception.Message);
+            context.ExceptionHandled = true;
+
+        }
             return Task.CompletedTask;
         }
-    }
+}
 }

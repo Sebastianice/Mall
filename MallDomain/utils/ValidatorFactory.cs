@@ -33,7 +33,8 @@ namespace MallDomain.utils
             else if (obj is MallUpdateNameParam)
             {
                 return new MallUpdateNameParamValidator() as IValidator<T>;
-            } else if (obj is MallUpdatePasswordParam)
+            }
+            else if (obj is MallUpdatePasswordParam)
             {
                 return new MallUpdatePasswordParamValidator() as IValidator<T>;
             }
