@@ -1,16 +1,13 @@
-﻿using System.Data;
-using IdentityModel;
-using MallDomain.entity.mall;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using IdentityModel;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.mannage;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MallInfrastructure.service.mannage
 {
@@ -18,21 +15,21 @@ namespace MallInfrastructure.service.mannage
     {
         private readonly MallContext context;
         private readonly IConfiguration configuration;
-        private readonly IMemoryCache cache;
+        // private readonly IMemoryCache cache;
         private readonly JwtSecurityTokenHandler jwtSecurityTokenHandler;
 
         public ManageAdminUserService
             (MallContext context, IConfiguration configuration,
-            IMemoryCache cache, JwtSecurityTokenHandler jwtSecurityTokenHandler)
+            JwtSecurityTokenHandler jwtSecurityTokenHandler)
 
         {
             this.context = context;
             this.configuration = configuration;
-            this.cache = cache;
+
             this.jwtSecurityTokenHandler = jwtSecurityTokenHandler;
         }
 
-        public async Task<MallAdminUserToken> AdminLogin(MallAdminLoginParam param)
+        public async Task<AdminUserToken> AdminLogin(MallAdminLoginParam param)
         {
             var adminUser = await context.
                                AdminUsers.
@@ -49,7 +46,7 @@ namespace MallInfrastructure.service.mannage
 
         }
 
-        public async Task CreateMallAdminUser(MallAdminUser mallAdminUser)
+        public async Task CreateMallAdminUser(AdminUser mallAdminUser)
         {
             var user
                     = context.AdminUsers.
@@ -62,7 +59,7 @@ namespace MallInfrastructure.service.mannage
             await context.SaveChangesAsync();
 
         }
-        public async Task<MallAdminUserToken> generateTokenAsync(MallAdminUser user)
+        public async Task<AdminUserToken> generateTokenAsync(AdminUser user)
         {
 
             var iss = configuration["AdminToken:iss"];  //发行人
@@ -87,13 +84,13 @@ namespace MallInfrastructure.service.mannage
 
             var jwtoken = new JwtSecurityToken(iss, aud, identity, nbf, exp, signingCredentials);
 
-            var token = jwtSecurityTokenHandler.WriteToken(jwtoken);
+            var token = "Bearer " + jwtSecurityTokenHandler.WriteToken(jwtoken);
 
 
             //查询是否存在token
             //没有就新建，存在就覆盖，签发新token    
             var oldtoken = await context.
-                                 MallAdminUserTokens.
+                                 AdminUserTokens.
                                  SingleOrDefaultAsync(s =>
                                                       s.AdminUserId
                                                        ==
@@ -102,7 +99,7 @@ namespace MallInfrastructure.service.mannage
 
             if (oldtoken == null)
             {
-                oldtoken = new MallAdminUserToken
+                oldtoken = new AdminUserToken
                 {
                     ExpireTime = exp,
                     Token = token,
@@ -121,14 +118,14 @@ namespace MallInfrastructure.service.mannage
 
             await context.SaveChangesAsync();
 
-            cache.Set("Admin" + oldtoken.AdminUserId, token);
+            //  cache.Set("Admin" + oldtoken.AdminUserId, token);
 
             return oldtoken!;
         }
 
-        public async Task<MallAdminUser> GetMallAdminUser(string token)
+        public async Task<AdminUser> GetMallAdminUser(string token)
         {
-            var adminToken = await context.MallAdminUserTokens
+            var adminToken = await context.AdminUserTokens
                                  .SingleOrDefaultAsync(w => w.Token == token);
 
             if (adminToken is null) throw new Exception("不存在该账户!");
@@ -143,7 +140,7 @@ namespace MallInfrastructure.service.mannage
 
         public async Task UpdateMallAdminName(string token, MallUpdateNameParam param)
         {
-            var adminToken = await context.MallAdminUserTokens
+            var adminToken = await context.AdminUserTokens
                                 .SingleOrDefaultAsync(w => w.Token == token);
 
             if (adminToken is null) throw new Exception("不存在该账户!");
@@ -163,7 +160,7 @@ namespace MallInfrastructure.service.mannage
 
         public async Task UpdateMallAdminPassWord(string token, MallUpdatePasswordParam param)
         {
-            var adminToken = await context.MallAdminUserTokens
+            var adminToken = await context.AdminUserTokens
                                 .SingleOrDefaultAsync(w => w.Token == token);
 
             if (adminToken is null) throw new Exception("不存在该账户!");
@@ -179,7 +176,7 @@ namespace MallInfrastructure.service.mannage
             }
 
             adminUser.LoginPassword = param.NewPassword;
-         
+
             await context.SaveChangesAsync();
 
         }

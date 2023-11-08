@@ -5,15 +5,15 @@ namespace MallDomain.service.mannage
 {
     public interface IManageAdminUserService
     {
-        public Task CreateMallAdminUser(MallAdminUser mallAdminUser);
+        public Task CreateMallAdminUser(AdminUser mallAdminUser);
 
-        public Task UpdateMallAdminName(string token,MallUpdateNameParam param);
+        public Task UpdateMallAdminName(string token, MallUpdateNameParam param);
 
-        public Task UpdateMallAdminPassWord(string token,MallUpdatePasswordParam param);
+        public Task UpdateMallAdminPassWord(string token, MallUpdatePasswordParam param);
 
-        public Task<MallAdminUser> GetMallAdminUser(string token);
+        public Task<AdminUser> GetMallAdminUser(string token);
 
         // AdminLogin 管理员登陆
-        public Task<MallAdminUserToken> AdminLogin(MallAdminLoginParam param);
+        public Task<AdminUserToken> AdminLogin(MallAdminLoginParam param);
     }
 }

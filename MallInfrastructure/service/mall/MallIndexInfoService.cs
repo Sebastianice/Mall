@@ -15,9 +15,9 @@ namespace MallInfrastructure.service.mall
             context = mallContext;
         }
         // GetConfigGoodsForIndex 首页返回相关IndexConfig
-        public async Task<List<MallIndexConfigGoodsResponse>> GetConfigGoodsForIndex(int configType, int num)
+        public async Task<List<IndexConfigGoodsResponse>> GetConfigGoodsForIndex(int configType, int num)
         {
-            List<MallIndexConfig>? list = await context.MallIndexConfigs.
+            List<IndexConfig>? list = await context.IndexConfigs.
                 Where(w => w.ConfigType == configType).
                 OrderByDescending(o => o.ConfigRank).
                 AsNoTracking().
@@ -34,17 +34,17 @@ namespace MallInfrastructure.service.mall
                 }
 
                 // 获取商品信息
-                var goodsInfos = await context.MallGoodsInfos.
+                var goodsInfos = await context.GoodsInfos.
                     Where(w => ids.Contains(w.GoodsId)).
                     AsNoTracking().
                     ToListAsync();
 
-                var indexGoodsList = goodsInfos.Adapt<List<MallIndexConfigGoodsResponse>>();
+                var indexGoodsList = goodsInfos.Adapt<List<IndexConfigGoodsResponse>>();
 
                 return indexGoodsList;
             }
 
-            return new List<MallIndexConfigGoodsResponse>();
+            return new List<IndexConfigGoodsResponse>();
         }
     }
 }

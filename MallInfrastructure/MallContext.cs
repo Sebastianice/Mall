@@ -10,19 +10,19 @@ namespace MallInfrastructure
         {
         }
 
-        public DbSet<MallOrderAddress> MallOrderAddressese { get; set; }
-        public DbSet<MallShoppingCartItem> MallShoppingCartItems { get; set; }
-        public DbSet<MallUser> MallUsers { get; set; }
-        public DbSet<MallUserAddress> MallUserAddresses { get; set; }
-        public DbSet<MallUserToken> MallUserTokens { get; set; }
-        public DbSet<MallAdminUser> AdminUsers { get; set; }
-        public DbSet<MallAdminUserToken> MallAdminUserTokens { get; set; }
-        public DbSet<MallCarousel> MallCarousels { get; set; }
-        public DbSet<MallGoodsCategory> MallGoodsCategories { get; set; }
-        public DbSet<MallGoodsInfo> MallGoodsInfos { get; set; }
-        public DbSet<MallIndexConfig> MallIndexConfigs { get; set; }
-        public DbSet<MallOrder> MallOrders { get; set; }
-        public DbSet<MallOrderItem> MallOrderItems { get; set; }
+        public DbSet<OrderAddress> OrderAddressese { get; set; }
+        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserAddress> UserAddresses { get; set; }
+        public DbSet<UserToken> UserTokens { get; set; }
+        public DbSet<AdminUser> AdminUsers { get; set; }
+        public DbSet<AdminUserToken> AdminUserTokens { get; set; }
+        public DbSet<Carousel> Carousels { get; set; }
+        public DbSet<GoodsCategory> GoodsCategories { get; set; }
+        public DbSet<GoodsInfo> GoodsInfos { get; set; }
+        public DbSet<IndexConfig> IndexConfigs { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
 
 

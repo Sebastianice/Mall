@@ -3,7 +3,6 @@ using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.mannage;
 using MallDomain.utils;
-using MallInfrastructure.service.mall;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,12 +38,12 @@ namespace MallApi.Controllers.mannage
                     Join(";", vResult.
                                        Errors.
                                        Select(e => e.ErrorMessage));
-                return Result.FailWithMessage(msg);   
+                return Result.FailWithMessage(msg);
             }
 
 
-           await manageAdminUserService.
-                 CreateMallAdminUser(mallAdminParam.Adapt<MallAdminUser>());
+            await manageAdminUserService.
+                  CreateMallAdminUser(mallAdminParam.Adapt<AdminUser>());
 
 
             return Result.Ok();
@@ -55,7 +54,7 @@ namespace MallApi.Controllers.mannage
         public async Task<Result> UpdateAdminUserName([FromBody] MallUpdateNameParam req)
         {
 
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             var v = await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req!);
 
             if (!v.IsValid)
@@ -64,7 +63,7 @@ namespace MallApi.Controllers.mannage
                 return Result.FailWithMessage(msg);
             }
             await manageAdminUserService.UpdateMallAdminName(token, req);
-            
+
             return Result.OkWithMessage("更新用户名昵称成功");
         }
 
@@ -72,7 +71,7 @@ namespace MallApi.Controllers.mannage
         [HttpPut("adminUser/password")]
         public async Task<Result> UpdateAdminUserPassword([FromBody] MallUpdatePasswordParam req)
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             var v = await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req!);
 
             if (!v.IsValid)
@@ -109,33 +108,33 @@ namespace MallApi.Controllers.mannage
         [HttpDelete("logout")]
         public async Task<Result> AdminLogout()
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
-           await mananageAdminTokenService.DeleteMallAdminUserToken(token);
+            var token = Request.Headers["Authorization"];
+            await mananageAdminTokenService.DeleteMallAdminUserToken(token);
             return Result.Ok();
         }
 
 
-       /* [HttpPost("upload/file")]  不打算实现了
-        public async Task<Result> UploadFile()
-        {
-            return Result.Ok();
-        }*/
+        /* [HttpPost("upload/file")]  不打算实现了
+         public async Task<Result> UploadFile()
+         {
+             return Result.Ok();
+         }*/
 
 
         [HttpPost("adminUser/login")]
-        public async Task<Result> AdminLogin([FromBody]MallAdminLoginParam req)
+        public async Task<Result> AdminLogin([FromBody] MallAdminLoginParam req)
         {
-          var v=  await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req!);
+            var v = await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req!);
 
             if (!v.IsValid)
             {
                 string msg = string.Join(";", v.Errors.Select(w => w.ErrorMessage));
                 return Result.FailWithMessage(msg);
             }
-            
+
             var adminToken = await manageAdminUserService.AdminLogin(req);
-            
-            return Result.OkWithDetailed(adminToken,"管理员登录成功");
+
+            return Result.OkWithDetailed(adminToken, "管理员登录成功");
         }
     }
 }

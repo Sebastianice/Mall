@@ -23,18 +23,15 @@ namespace MallApi.Controllers.mall
         [HttpGet("shop-cart")]
         public async Task<Result> CartItemList()
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             var shopCartItem = await mallShopCartService.GetMyShoppingCartItems(token);
-            if (shopCartItem.Count <= 0)
-            {
-                return Result.FailWithMessage("获取购物车失败");
-            }
+          
             return Result.OkWithData(shopCartItem);
         }
         [HttpPost("shop-cart")]
         public async Task<Result> SaveMallShoppingCartItem([FromBody] SaveCartItemParam saveCartItemParam)
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             await mallShopCartService.SaveMallCartItem(token, saveCartItemParam);
 
 
@@ -45,7 +42,7 @@ namespace MallApi.Controllers.mall
         [HttpPut("shop-cart")]
         public async Task<Result> UpdateMallShoppingCartItem([FromBody] UpdateCartItemParam req)
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             await mallShopCartService.UpdateMallCartItem(token, req);
             return Result.OkWithMessage("修改购物车成功");
         }
@@ -54,19 +51,19 @@ namespace MallApi.Controllers.mall
         [HttpDelete("shop-cart/{newBeeMallShoppingCartItemId}")]
         public async Task<Result> DelMallShoppingCartItem(long shoppingCartItemId)
         {
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var token = Request.Headers["Authorization"];
             await mallShopCartService.DeleteMallCartItem(token, shoppingCartItemId);
             return Result.OkWithMessage("删除成功");
         }
 
 
         [HttpGet("shop-cart/settle")]
-        public async Task<Result> ToSettle([FromQuery] string cartItemId)
+        public async Task<Result> ToSettle([FromQuery] string cartItemIds)
         {
-            var cartItemIds = NumUtils.StrToInt(cartItemId);
-            var token = Request.Headers["Authorization"].ToString()[7..];
+            var cartItemId = NumUtils.StrToInt(cartItemIds);
+            var token = Request.Headers["Authorization"];
 
-            var list = await mallShopCartService.GetCartItemsForSettle(token, cartItemIds);
+            var list = await mallShopCartService.GetCartItemsForSettle(token, cartItemId);
             if (list.Count == 0)
             {
                 return Result.FailWithMessage("获取购物车明细异常");
