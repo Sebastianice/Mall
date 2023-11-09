@@ -29,7 +29,7 @@ namespace MallInfrastructure.service.mannage
             this.jwtSecurityTokenHandler = jwtSecurityTokenHandler;
         }
 
-        public async Task<AdminUserToken> AdminLogin(MallAdminLoginParam param)
+        public async Task<AdminUserToken> AdminLogin(AdminLoginParam param)
         {
             var adminUser = await context.
                                AdminUsers.
@@ -138,7 +138,7 @@ namespace MallInfrastructure.service.mannage
             return adminUser;
         }
 
-        public async Task UpdateMallAdminName(string token, MallUpdateNameParam param)
+        public async Task UpdateMallAdminName(string token, UpdateNameParam param)
         {
             var adminToken = await context.AdminUserTokens
                                 .SingleOrDefaultAsync(w => w.Token == token);
@@ -150,8 +150,8 @@ namespace MallInfrastructure.service.mannage
 
             if (adminUser is null) throw new Exception("未查到该用户信息");
 
-            adminUser.LoginUserName = param.LoginUserName;
-            adminUser.NickName = param.NickName;
+            adminUser.LoginUserName = param.LoginUserName ?? adminUser.LoginUserName;
+            adminUser.NickName = param.NickName ?? adminUser.NickName;
 
             await context.SaveChangesAsync();
 
@@ -175,7 +175,7 @@ namespace MallInfrastructure.service.mannage
                 throw new Exception("原密码不正确");
             }
 
-            adminUser.LoginPassword = param.NewPassword;
+            adminUser.LoginPassword = param.NewPassword!;
 
             await context.SaveChangesAsync();
 

@@ -1,11 +1,13 @@
 ﻿using MallDomain.entity.common.response;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
+using MallDomain.service.manage;
 using MallDomain.service.mannage;
-using MallDomain.utils;
+using MallDomain.utils.validator;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace MallApi.Controllers.mannage
 {
@@ -17,15 +19,16 @@ namespace MallApi.Controllers.mannage
     {
         private readonly IManageAdminUserService manageAdminUserService;
         private readonly IManageAdminTokenService mananageAdminTokenService;
-
-        public ManageAdminUserController(IManageAdminUserService manageAdminUserService, IManageAdminTokenService mnanageAdminTokenService)
+        private readonly IManageUserService manageUserService;
+        public ManageAdminUserController(IManageAdminUserService manageAdminUserService, IManageAdminTokenService mnanageAdminTokenService, IManageUserService manageUserService)
         {
             this.manageAdminUserService = manageAdminUserService;
             this.mananageAdminTokenService = mnanageAdminTokenService;
+            this.manageUserService = manageUserService;
         }
 
         [HttpPost("createMallAdminUser")]
-        public async Task<Result> CreateAdminUser([FromBody] MallAdminParam mallAdminParam)
+        public async Task<Result> CreateAdminUser([FromBody] AdminParam mallAdminParam)
         {
 
             var validator = ValidatorFactory.CreateValidator(mallAdminParam);
@@ -51,7 +54,7 @@ namespace MallApi.Controllers.mannage
 
 
         [HttpPut("adminUser/name")]
-        public async Task<Result> UpdateAdminUserName([FromBody] MallUpdateNameParam req)
+        public async Task<Result> UpdateAdminUserName([FromBody] UpdateNameParam req)
         {
 
             var token = Request.Headers["Authorization"];
@@ -84,45 +87,76 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithMessage("更新用户名昵称成功");
         }
 
-
+        // UserList 商城注册用户列表
         [HttpGet("users")]
-        public async Task<Result> UserList()
+        public async Task<Result> UserList([FromQuery] UserSearch search)
         {
-            return Result.Ok();
+            var (list, total) = await manageUserService.GetMallUserInfoList(search);
+
+            return Result.OkWithDetailed(new PageResult()
+            {
+                List = list,
+                TotalCount = total,
+                CurrPage = search.PageInfo.PageNumber,
+                PageSize = search.PageInfo.PageSize
+            }, "获取成功");
         }
 
 
         [HttpPut("users/{lockStatus}")]
-        public async Task<Result> LockUser()
+        public async Task<Result> LockUser([FromBody] List<long> Ids)
         {
-            return Result.Ok();
+            await manageUserService.LockUser(Ids);
+
+            return Result.OkWithMessage("更新成功");
         }
 
 
         [HttpGet("adminUser/profile")]
         public async Task<Result> AdminUserProfile()
         {
-            return Result.Ok();
+            var token = Request.Headers["Authorization"];
+            var admin = await manageAdminUserService.GetMallAdminUser(token!);
+
+            return Result.OkWithData(admin);
         }
 
         [HttpDelete("logout")]
         public async Task<Result> AdminLogout()
         {
             var token = Request.Headers["Authorization"];
-            await mananageAdminTokenService.DeleteMallAdminUserToken(token);
+            await mananageAdminTokenService.DeleteMallAdminUserToken(token!);
             return Result.Ok();
         }
 
 
-        /* [HttpPost("upload/file")]  不打算实现了
-         public async Task<Result> UploadFile()
-         {
-             return Result.Ok();
-         }*/
+        [HttpPost("upload/file")]
+        public async Task<Result> UploadFile(List<IFormFile> files)
+        {
+            long size = files.Sum(f => f.Length);
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    var filePath = Path.GetTempFileName();
+                    
+
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+                }
+                await Console.Out.WriteLineAsync();
+            }
+
+
+            return Result.Ok();
+        }
 
 
         [HttpPost("adminUser/login")]
-        public async Task<Result> AdminLogin([FromBody] MallAdminLoginParam req)
+        public async Task<Result> AdminLogin([FromBody] AdminLoginParam req)
         {
             var v = await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req!);
 
@@ -134,7 +168,7 @@ namespace MallApi.Controllers.mannage
 
             var adminToken = await manageAdminUserService.AdminLogin(req);
 
-            return Result.OkWithDetailed(adminToken, "管理员登录成功");
+            return Result.OkWithDetailed(adminToken.Token, "管理员登录成功");
         }
     }
 }
