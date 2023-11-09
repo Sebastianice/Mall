@@ -2,7 +2,7 @@
 using MallDomain.entity.common.response;
 using MallDomain.entity.mall.request;
 using MallDomain.service.mall;
-using MallDomain.utils;
+using MallDomain.utils.validator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

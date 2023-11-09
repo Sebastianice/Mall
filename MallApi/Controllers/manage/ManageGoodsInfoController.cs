@@ -1,5 +1,10 @@
 ﻿using MallDomain.entity.common.response;
+using MallDomain.entity.mannage;
+using MallDomain.entity.mannage.request;
+using MallDomain.service.manage;
+using MallDomain.utils.validator;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Ocsp;
 
 namespace MallApi.Controllers.mannage
 {
@@ -7,34 +12,61 @@ namespace MallApi.Controllers.mannage
     [ApiController]
     public class ManageGoodsInfoController : ControllerBase
     {
-        [HttpPost("goods")]
-        public async Task<Result> CreateGoodsInfo()
+        private readonly IManageGoodsInfoService manageGoodsInfoService;
+        public ManageGoodsInfoController(IManageGoodsInfoService manageGoodsInfoService)
         {
-            return Result.Ok();
+            this.manageGoodsInfoService = manageGoodsInfoService;
+        }
+
+        [HttpPost("goods")]
+        public async Task<Result> CreateGoodsInfo([FromBody] GoodsInfoAddParam req)
+        {
+            var rs = await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req);
+
+            if (!rs.IsValid)
+            {
+                return Result.FailWithMessage("参数不合法");
+            }
+            await manageGoodsInfoService.CreateMallGoodsInfo(req);
+
+
+            return Result.OkWithMessage("创建成功");
         }
         [HttpDelete("deleteMallGoodsInfo")]
-        public async Task<Result> DeleteGoodsInfo()
+        public async Task<Result> DeleteGoodsInfo([FromBody] GoodsInfo req)
         {
-            return Result.Ok();
+            await manageGoodsInfoService.DeleteMallGoodsInfo(req);
+            return Result.OkWithMessage("删除成功");
         }
         [HttpPut("goods/status/{status}")]
-        public async Task<Result> ChangeGoodsInfoByIds()
+        public async Task<Result> ChangeGoodsInfoByIds([FromBody] List<long> ids, [FromQuery] string status)
         {
-            return Result.Ok();
+            await manageGoodsInfoService.ChangeMallGoodsInfoByIds(ids, status);
+            return Result.OkWithMessage("修改商品状态成功");
         }
         [HttpPut("goods")]
-        public async Task<Result> UpdateGoodsInfo()
+        public async Task<Result> UpdateGoodsInfo([FromBody] GoodsInfoUpdateParam req)
         {
-            return Result.Ok();
+            var rs = await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req);
+
+            if (!rs.IsValid)
+            {
+                return Result.FailWithMessage("参数不合法");
+            }
+            await manageGoodsInfoService.UpdateMallGoodsInfo(req);
+
+            return Result.OkWithMessage("修改商品成功");
         }
         [HttpGet("goods/{id}")]
-        public async Task<Result> FindGoodsInfo()
+        public async Task<Result> FindGoodsInfo(long id)
         {
-            return Result.Ok();
+            var info = await manageGoodsInfoService.GetMallGoodsInfo(id);
+            return Result.OkWithData(info);
         }
         [HttpGet("goods/list")]
         public async Task<Result> GetGoodsInfoList()
         {
+            ///TODO
             return Result.Ok();
         }
     }

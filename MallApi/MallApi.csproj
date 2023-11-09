@@ -33,4 +33,8 @@
     <ProjectReference Include="..\MallInfrastructure\MallInfrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="staticfiles\" />
+  </ItemGroup>
+
 </Project>

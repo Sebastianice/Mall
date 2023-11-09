@@ -7,13 +7,13 @@ namespace MallDomain.service.mannage
     {
         public Task CreateMallAdminUser(AdminUser mallAdminUser);
 
-        public Task UpdateMallAdminName(string token, MallUpdateNameParam param);
+        public Task UpdateMallAdminName(string token, UpdateNameParam param);
 
         public Task UpdateMallAdminPassWord(string token, MallUpdatePasswordParam param);
 
         public Task<AdminUser> GetMallAdminUser(string token);
 
         // AdminLogin 管理员登陆
-        public Task<AdminUserToken> AdminLogin(MallAdminLoginParam param);
+        public Task<AdminUserToken> AdminLogin(AdminLoginParam param);
     }
 }

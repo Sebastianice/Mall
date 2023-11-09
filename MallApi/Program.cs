@@ -4,6 +4,7 @@ using EntityFramework.Exceptions.MySQL;
 using MallApi.filter;
 using MallApi.middleware;
 using MallDomain.service.mall;
+using MallDomain.service.manage;
 using MallDomain.service.mannage;
 using MallInfrastructure;
 using MallInfrastructure.service.mall;
@@ -11,6 +12,7 @@ using MallInfrastructure.service.mannage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -68,6 +70,13 @@ builder.Services.AddScoped<IMallUserAddressService, MallUserAddressService>();
 builder.Services.AddScoped<IMallUserTokenService, MallUserTokenService>();
 builder.Services.AddScoped<IManageAdminUserService, ManageAdminUserService>();
 builder.Services.AddScoped<IManageAdminTokenService, ManageAdminTokenService>();
+builder.Services.AddScoped<IManageUserService, ManageUserService>();
+builder.Services.AddScoped<IManageCarouselService, ManageCarouselService>();
+builder.Services.AddScoped<IManageGoodsCategoryService, ManageGoodsCategoryService>();
+builder.Services.AddScoped<IManageGoodsInfoService, ManageGoodsInfoService>();
+builder.Services.AddScoped<IManageIndexConfigService, ManageIndexConfigService>();
+builder.Services.AddScoped<IManageOrderService, ManageOrderService>();
+
 
 
 
@@ -180,6 +189,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthenFailHandling();
 app.UseRouting();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "staticfiles")),
+    RequestPath = "/staticfiles"
+});
 app.UseCors("local");
 
 
