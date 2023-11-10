@@ -1,4 +1,5 @@
-﻿using MallDomain.entity.common.enums;
+﻿using LinqKit;
+using MallDomain.entity.common.enums;
 using MallDomain.entity.common.request;
 
 using MallDomain.entity.mannage;
@@ -111,11 +112,33 @@ namespace MallInfrastructure.service.mannage
             return newBeeMallOrderDetailVO;
         }
 
-        public Task<(List<Order>, long)> GetMallOrderInfoList(PageInfo info, string orderNo, string orderStatus)
+        public async Task<(List<Order>, long)> GetMallOrderInfoList(PageInfo info, string orderNo, string orderStatus)
         {
+            var limit = info.PageSize;
+            var offset = limit * (info.PageNumber - 1);
 
-            ///TODO
-            throw new NotImplementedException();
+
+            var query = context.Orders.AsQueryable();
+
+            if (!string.IsNullOrEmpty(orderNo))
+            {
+                query = query.Where(w => w.OrderNo == orderNo);
+            }
+
+            if (!string.IsNullOrEmpty(orderStatus))
+            {
+                var status = int.Parse(orderStatus);
+                query = query.Where(w => w.OrderStatus == status);
+            }
+
+            
+                              
+
+            var count = await query.CountAsync();
+
+            var list = await query.Skip(offset).Take(limit).ToListAsync();
+
+            return (list, count);
         }
     }
 }

@@ -75,7 +75,7 @@ namespace MallInfrastructure.service.mannage
             //生效时间
             var nbf = DateTime.UtcNow;
             //
-            var exp = DateTime.UtcNow.AddMinutes(10);
+            var exp = DateTime.UtcNow.AddMinutes(30);
             var secrect = Encoding.UTF8.GetBytes(sign!);
 
             SymmetricSecurityKey ssk = new(secrect);
@@ -101,6 +101,7 @@ namespace MallInfrastructure.service.mannage
             {
                 oldtoken = new AdminUserToken
                 {
+                    AdminUserId = user.AdminUserId,
                     ExpireTime = exp,
                     Token = token,
                     UpdateTime = nbf,
@@ -110,6 +111,7 @@ namespace MallInfrastructure.service.mannage
             }
             else
             {
+
                 oldtoken.ExpireTime = exp.ToUniversalTime();
                 oldtoken.Token = token;
                 oldtoken.UpdateTime = nbf.ToUniversalTime();

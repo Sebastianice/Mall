@@ -15,7 +15,7 @@
     public class IdsReq
     {
 
-        public List<int> Ids { get; set; }
+        public List<long> Ids { get; set; } = null!;
     }
 
     public class GetAuthorityId

@@ -1,4 +1,5 @@
-﻿using MallDomain.entity.mall.response;
+﻿using LinqKit;
+using MallDomain.entity.mall.response;
 using MallDomain.entity.mannage;
 using MallDomain.service.mall;
 using Mapster;
@@ -43,20 +44,26 @@ namespace MallInfrastructure.service.mall
             var searchList = new List<GoodsSearchResponse>();
 
             IQueryable<GoodsInfo>? query = context.GoodsInfos.AsQueryable();
-
+            var predicate = PredicateBuilder.New<GoodsInfo>(true);
             if (!string.IsNullOrEmpty(keyword))
             {
-                query = query.Where(p =>
+                predicate = predicate.And(p =>
                 EF.Functions.Like(p.GoodsName!, $"%{keyword}%")
                 || EF.Functions.Like(p.GoodsIntro!, $"%{keyword}%"));
+              
+
+                
             }
 
             if (goodsCategoryId >= 0)
             {
-                query = query.Where(q => q.GoodsCategoryId == goodsCategoryId);
+                predicate = predicate.And(q => q.GoodsCategoryId == goodsCategoryId);
             }
 
-            int count = query.Count();
+            int count =await query
+                .AsExpandable()
+                .Where(predicate)
+                .CountAsync();
 
             if (count == 0) throw new Exception("查询失败，未查到数据");
            
@@ -82,11 +89,12 @@ namespace MallInfrastructure.service.mall
             int limit = 10;
             int offset = 10 * (pageNumber - 1);
 
-            var list = await
-                query.
-                Skip(offset).
-                Take(limit).
-                ToListAsync();
+            var list = await query
+                .AsExpandable()
+                .Where(predicate)
+               . Skip(offset)
+               . Take(limit)
+               .ToListAsync();
 
             foreach (var item in list)
             {

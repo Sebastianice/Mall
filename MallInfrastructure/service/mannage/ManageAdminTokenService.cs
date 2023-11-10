@@ -24,8 +24,7 @@ namespace MallInfrastructure.service.mannage
 
             if (adminToken == null) throw new Exception("未查询到记录");
 
-           
-
+     
             context.AdminUserTokens.Remove(adminToken);
             await context.SaveChangesAsync();
         }

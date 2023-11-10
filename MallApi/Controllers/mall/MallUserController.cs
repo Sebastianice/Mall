@@ -48,7 +48,7 @@ namespace MallApi.Controllers.mall
         [HttpPost("user/logout")]
         public async Task<Result> UserLogout()
         {
-            var token = Request.Headers["Authorization"];
+            string token = Request.Headers["Authorization"]!;
 
             await mallUserTokenService.DeleteMallUserToken(token);
 

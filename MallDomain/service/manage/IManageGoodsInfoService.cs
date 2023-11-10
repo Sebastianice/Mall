@@ -26,7 +26,7 @@ namespace MallDomain.service.manage
         public Task<GoodsInfo> GetMallGoodsInfo(long id);
 
         // GetMallGoodsInfoInfoList 分页获取MallGoodsInfo记录
-        public Task<(List<GoodsInfo>, long)> GetMallGoodsInfoInfoList(GoodsInfoSearch info, string goodsName, string goodsSellStatus);
+        public Task<(List<GoodsInfo>, long)> GetMallGoodsInfoInfoList(PageInfo pageInfo, string goodsName, string goodsSellStatus);
 
     }
 }

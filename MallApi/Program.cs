@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog.Extensions.Logging;
 
 
 #region ЗўЮёзЂВс
@@ -31,7 +32,7 @@ builder.Services.AddLogging(builder =>
 {
     builder.ClearProviders();
     builder.SetMinimumLevel(LogLevel.Debug);
-
+    builder.AddNLog();
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -85,7 +86,7 @@ builder.Services.AddCors(o =>
 {
     o.AddPolicy("local", p =>
     {
-        p.WithOrigins(new string[] { "http://localhost:8080" })
+        p.WithOrigins(new string[] { "http://localhost:8080", "http://localhost:3000" })
        .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
@@ -168,8 +169,9 @@ builder.Services.AddDbContext<MallContext>(p =>
 
     p.UseMySql(con, version);
     p.UseExceptionProcessor();
-    p.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
     p.EnableSensitiveDataLogging();
+    p.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
+  
 });
 
 

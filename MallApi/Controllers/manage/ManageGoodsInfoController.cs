@@ -1,4 +1,5 @@
-﻿using MallDomain.entity.common.response;
+﻿using MallDomain.entity.common.request;
+using MallDomain.entity.common.response;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
@@ -39,9 +40,9 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithMessage("删除成功");
         }
         [HttpPut("goods/status/{status}")]
-        public async Task<Result> ChangeGoodsInfoByIds([FromBody] List<long> ids, [FromQuery] string status)
+        public async Task<Result> ChangeGoodsInfoByIds([FromBody]IdsReq ids, [FromQuery] string status)
         {
-            await manageGoodsInfoService.ChangeMallGoodsInfoByIds(ids, status);
+            await manageGoodsInfoService.ChangeMallGoodsInfoByIds(ids.Ids, status);
             return Result.OkWithMessage("修改商品状态成功");
         }
         [HttpPut("goods")]
@@ -64,10 +65,20 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithData(info);
         }
         [HttpGet("goods/list")]
-        public async Task<Result> GetGoodsInfoList()
+        public async Task<Result> GetGoodsInfoList([FromQuery] PageInfo pageInfo,
+          [FromQuery] string? goodsName = "", [FromQuery] string? goodsSellStatus = "")
         {
-            ///TODO
-            return Result.Ok();
+
+            var (list, total) = await manageGoodsInfoService.GetMallGoodsInfoInfoList(pageInfo, goodsName!, goodsSellStatus!);
+
+            return Result.OkWithDetailed(new PageResult()
+            {
+                List = list,
+                CurrPage = pageInfo.PageNumber,
+                TotalCount = total,
+                PageSize = pageInfo.PageSize,
+                 TotalPage = (int)Math.Ceiling((double)total / pageInfo.PageSize)
+            }, "获取成功");
         }
     }
 }

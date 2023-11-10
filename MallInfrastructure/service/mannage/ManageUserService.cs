@@ -1,5 +1,5 @@
-﻿using MallDomain.entity.mall;
-using MallDomain.entity.mannage.request;
+﻿using MallDomain.entity.common.request;
+using MallDomain.entity.mall;
 using MallDomain.service.manage;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,10 +15,10 @@ namespace MallInfrastructure.service.mannage
         }
 
         // GetMallUserInfoList 分页获取商城注册用户列表
-        public async Task<(List<User> list, int total)> GetMallUserInfoList(UserSearch search)
+        public async Task<(List<User> list, int total)> GetMallUserInfoList(PageInfo search)
         {
-            int limit = search.PageInfo.PageSize;
-            int offset = limit * (search.PageInfo.PageNumber - 1);
+            int limit = search.PageSize;
+            int offset = limit * (search.PageNumber - 1);
 
 
             int total = await context.Users.CountAsync();
@@ -34,14 +34,14 @@ namespace MallInfrastructure.service.mannage
         }
 
         // LockUser 修改用户状态
-        public async Task LockUser(List<long> ids)
+        public async Task LockUser(List<long> ids,sbyte lockStatus)
         {
             //使用ef core批量操作新特性
            await context.Users
                 .Where(u=>ids.Contains(u.UserId))
                 .ExecuteUpdateAsync
                 (s => s.SetProperty
-                       (p=>p.LockedFlag,1));
+                       (p=>p.LockedFlag, lockStatus));
      
         }
     }

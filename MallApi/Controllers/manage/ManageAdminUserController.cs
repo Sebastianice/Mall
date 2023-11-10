@@ -1,4 +1,5 @@
-﻿using MallDomain.entity.common.response;
+﻿using MallDomain.entity.common.request;
+using MallDomain.entity.common.response;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
@@ -20,13 +21,17 @@ namespace MallApi.Controllers.mannage
         private readonly IManageAdminUserService manageAdminUserService;
         private readonly IManageAdminTokenService mananageAdminTokenService;
         private readonly IManageUserService manageUserService;
-        public ManageAdminUserController(IManageAdminUserService manageAdminUserService, IManageAdminTokenService mnanageAdminTokenService, IManageUserService manageUserService)
+        private readonly IWebHostEnvironment _environment;
+
+       
+        public ManageAdminUserController(IManageAdminUserService manageAdminUserService, IManageAdminTokenService mnanageAdminTokenService, IManageUserService manageUserService, IWebHostEnvironment environment)
         {
             this.manageAdminUserService = manageAdminUserService;
             this.mananageAdminTokenService = mnanageAdminTokenService;
             this.manageUserService = manageUserService;
+            _environment = environment;
         }
-
+        [AllowAnonymous]
         [HttpPost("createMallAdminUser")]
         public async Task<Result> CreateAdminUser([FromBody] AdminParam mallAdminParam)
         {
@@ -89,7 +94,7 @@ namespace MallApi.Controllers.mannage
 
         // UserList 商城注册用户列表
         [HttpGet("users")]
-        public async Task<Result> UserList([FromQuery] UserSearch search)
+        public async Task<Result> UserList([FromQuery] PageInfo search)
         {
             var (list, total) = await manageUserService.GetMallUserInfoList(search);
 
@@ -97,16 +102,17 @@ namespace MallApi.Controllers.mannage
             {
                 List = list,
                 TotalCount = total,
-                CurrPage = search.PageInfo.PageNumber,
-                PageSize = search.PageInfo.PageSize
+                CurrPage = search.PageNumber,
+                PageSize = search.PageSize,
+                TotalPage = (int)Math.Ceiling((double)total / search.PageSize)
             }, "获取成功");
         }
 
 
         [HttpPut("users/{lockStatus}")]
-        public async Task<Result> LockUser([FromBody] List<long> Ids)
+        public async Task<Result> LockUser([FromBody] IdsReq ids,sbyte lockStatus)
         {
-            await manageUserService.LockUser(Ids);
+            await manageUserService.LockUser(ids.Ids, lockStatus);
 
             return Result.OkWithMessage("更新成功");
         }
@@ -131,7 +137,7 @@ namespace MallApi.Controllers.mannage
 
 
         [HttpPost("upload/file")]
-        public async Task<Result> UploadFile(List<IFormFile> files)
+        public async Task<Result> UploadFile([FromForm]List<IFormFile> files)
         {
             long size = files.Sum(f => f.Length);
 
@@ -139,22 +145,33 @@ namespace MallApi.Controllers.mannage
             {
                 if (formFile.Length > 0)
                 {
-                    var filePath = Path.GetTempFileName();
-                    
+                   
 
-                    using (var stream = System.IO.File.Create(filePath))
+                    // 生成随机的文件名
+                    string fileName = Path.GetRandomFileName() + Path.GetExtension(formFile.FileName);
+                    // 获取静态文件夹的物理路径
+                    string uploadsFolder = Path.Combine(_environment.ContentRootPath, "staticfiles");
+
+                    // 拼接文件的完整路径
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+
+                    // 将文件保存到静态文件夹
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await formFile.CopyToAsync(stream);
+                        await formFile.CopyToAsync(fileStream);
                     }
+                    return Result.OkWithData("http://localhost:5047/staticfiles/"+fileName);
                 }
-                await Console.Out.WriteLineAsync();
+                     
             }
 
+            return Result.FailWithMessage("接收文件失败");
 
-            return Result.Ok();
+
+
         }
 
-
+        [AllowAnonymous]
         [HttpPost("adminUser/login")]
         public async Task<Result> AdminLogin([FromBody] AdminLoginParam req)
         {
