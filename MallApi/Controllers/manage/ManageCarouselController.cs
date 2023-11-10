@@ -3,9 +3,7 @@ using MallDomain.entity.common.response;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
 using MallDomain.utils.validator;
-using MallInfrastructure.service.mall;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Ocsp;
 
 namespace MallApi.Controllers.mannage
 {
@@ -33,9 +31,9 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithMessage("创建轮播图成功");
         }
         [HttpDelete("carousels")]
-        public async Task<Result> DeleteCarousel([FromBody] List<long> ids)
+        public async Task<Result> DeleteCarousel([FromBody] IdsReq ids)
         {
-            await mallCarouselService.DeleteCarousel(ids);
+            await mallCarouselService.DeleteCarousel(ids.Ids);
             return Result.Ok();
         }
 
@@ -60,16 +58,16 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithData(cas);
         }
         [HttpGet("carousels")]
-        public async Task<Result> GetCarouselList(CarouselSearch csh)
+        public async Task<Result> GetCarouselList([FromQuery]PageInfo csh)
         {
             var (list, total) = await mallCarouselService.GetCarouselInfoList(csh);
             return Result.OkWithDetailed(new PageResult()
             {
                 List = list,
-                CurrPage = csh.PageInfo.PageNumber,
+                CurrPage = csh.PageNumber,
                 TotalCount = total,
-                PageSize = csh.PageInfo.PageSize
-
+                PageSize = csh.PageSize,
+                 TotalPage = (int)Math.Ceiling((double)total / csh.PageSize)
             }, "获取成功");
 
 

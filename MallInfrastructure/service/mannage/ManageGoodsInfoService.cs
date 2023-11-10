@@ -1,9 +1,12 @@
 ﻿using System;
+using LinqKit;
 using MallDomain.entity.common.enums;
+using MallDomain.entity.common.request;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Ocsp;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MallInfrastructure.service.mannage
@@ -71,10 +74,32 @@ namespace MallInfrastructure.service.mannage
 
         }
 
-        public Task<(List<GoodsInfo>, long)> GetMallGoodsInfoInfoList(GoodsInfoSearch info, string goodsName, string goodsSellStatus)
+        public async Task<(List<GoodsInfo>, long)> GetMallGoodsInfoInfoList(PageInfo pageInfo, string goodsName, string goodsSellStatus)
         {
-            ///TODO
-            throw new NotImplementedException();
+            var limit = pageInfo.PageSize;
+
+            var offset = limit * (pageInfo.PageNumber - 1);
+         var query=   context.GoodsInfos.AsQueryable();
+            int total = await query.CountAsync();
+            
+            var predicate = PredicateBuilder.New<GoodsInfo>(true);
+            
+            
+            if (!string.IsNullOrEmpty(goodsName))
+                query= query.Where(i => i.GoodsName == goodsName);
+
+            if (!string.IsNullOrEmpty(goodsSellStatus))
+                query = query.Where(i => i.GoodsSellStatus == sbyte.Parse(goodsSellStatus));
+
+            var list =await query
+                                  .OrderByDescending(i => i.GoodsId)
+                                  .AsNoTracking()
+                                  .Skip(offset)
+                                  .Take(limit)
+                                  .ToListAsync();
+
+
+            return (list, total);
         }
 
         public async Task UpdateMallGoodsInfo(GoodsInfoUpdateParam req)

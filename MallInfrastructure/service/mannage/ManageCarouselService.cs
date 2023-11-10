@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MallDomain.entity.common.request;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
@@ -52,11 +53,11 @@ namespace MallInfrastructure.service.mannage
             return carousel;
         }
 
-        public async Task<(List<Carousel>, int)> GetCarouselInfoList(CarouselSearch sec)
+        public async Task<(List<Carousel>, int)> GetCarouselInfoList(PageInfo sec)
         {
 
-            int limit = sec.PageInfo.PageSize;
-            int offset = limit * (sec.PageInfo.PageNumber - 1);
+            int limit = sec.PageSize;
+            int offset = limit * (sec.PageNumber - 1);
 
 
             int total = await context.Carousels.CountAsync();
@@ -66,6 +67,8 @@ namespace MallInfrastructure.service.mannage
                 .Take(limit)
                 .AsNoTracking()
                 .ToListAsync();
+
+
             return (list, total);
         }
 

@@ -1,4 +1,5 @@
-﻿using MallDomain.entity.mannage;
+﻿using MallDomain.entity.common.request;
+using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 
 namespace MallDomain.service.manage
@@ -18,6 +19,6 @@ namespace MallDomain.service.manage
         public Task<IndexConfig> GetMallIndexConfig(long id);
 
         // GetMallIndexConfigInfoList 分页获取MallIndexConfig记录
-        public Task<List<IndexConfig>> GetMallIndexConfigInfoList(IndexConfigSearch info);
+        public Task<(List<IndexConfig>,long)> GetMallIndexConfigInfoList(PageInfo info, sbyte configType);
     }
 }

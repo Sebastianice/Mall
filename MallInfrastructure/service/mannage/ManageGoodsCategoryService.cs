@@ -1,6 +1,9 @@
-﻿using MallDomain.entity.mannage;
+﻿using LinqKit;
+using MallDomain.entity.common.request;
+using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace MallInfrastructure.service.mannage
@@ -17,7 +20,7 @@ namespace MallInfrastructure.service.mannage
         public async Task AddCategory(GoodsCategoryReq req)
         {
             var goodsCategory = await context.GoodsCategories
-                 .SingleOrDefaultAsync(w => w.CategoryLevel == req.CategoryLevel);
+                  .SingleOrDefaultAsync(w => w.CategoryLevel == req.CategoryLevel && w.CategoryName == req.CategoryName);
 
             if (goodsCategory != null) throw new Exception("存在相同分类");
 
@@ -59,21 +62,42 @@ namespace MallInfrastructure.service.mannage
         public async Task<GoodsCategory> SelectCategoryById(long categoryId)
         {
             return await context.GoodsCategories
-                .SingleOrDefaultAsync(i=>i.CategoryId==categoryId) 
+                .SingleOrDefaultAsync(i => i.CategoryId == categoryId)
                 ?? throw new Exception("未查询到记录");
         }
-
-        public Task<(List<GoodsCategory>, int)> SelectCategoryPage(SearchCategoryParams req)
+        // SelectCategoryPage 获取分类分页数据
+        public async Task<(List<GoodsCategory>, int)> SelectCategoryPage(PageInfo info, int categoryLevel, int parentId)
         {
+            var limit = info.PageSize;
+            if (limit > 1000) limit = 1000;
 
-            ///TODO
-            throw new NotImplementedException();
+            var offset = limit * (info.PageNumber - 1);
+            var query = context.GoodsCategories.AsQueryable();
+            var predicate = PredicateBuilder.New<GoodsCategory>();
+            if (new List<int>() { 1, 2, 3 }.Contains(categoryLevel))
+                query = query.Where(i => i.CategoryLevel == categoryLevel);
+
+            if (parentId >= 0)
+                query = query.Where(i => i.ParentId == parentId);
+
+            int total =await query.CountAsync();
+
+            var list = query.AsNoTracking()
+                            .Skip(offset)
+                            .Take(limit)
+                            .OrderByDescending(c => c.CategoryRank)
+                            .ToList();
+
+            return (list, total);
         }
 
         public async Task UpdateCategory(GoodsCategoryReq req)
         {
             var goodsCategory = await context.GoodsCategories
-                  .SingleOrDefaultAsync(w => w.CategoryLevel == req.CategoryLevel);
+                  .SingleOrDefaultAsync(w =>
+                  w.CategoryLevel == req.CategoryLevel
+                  &&
+                  w.CategoryId==req.CategoryId);
 
             if (goodsCategory == null) throw new Exception("不存存在分类");
 

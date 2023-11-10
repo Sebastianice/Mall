@@ -18,6 +18,6 @@ namespace MallDomain.service.manage
         // GetMallOrder 根据id获取MallOrder记录
         public Task<NewBeeMallOrderDetailVO> GetMallOrder(long id);
         // GetMallOrderInfoList 分页获取MallOrder记录
-        public Task<(List<Order>, long)> GetMallOrderInfoList(PageInfo info, string orderNo, string orderStatus);
+        public Task<(List<Order>, long)> GetMallOrderInfoList(PageInfo info, string? orderNo, string? orderStatus);
     }
 }

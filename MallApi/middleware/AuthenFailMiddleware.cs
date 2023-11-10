@@ -1,6 +1,7 @@
 ﻿using MallDomain.entity.common.response;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace MallApi.middleware
 {
@@ -29,7 +30,7 @@ namespace MallApi.middleware
                 if (statusCode == 401)
                 {
                     code = Code.UNLOGIN;
-                    msg = "未认证,未登录";
+                    msg = "未登录!";
                 }
                 else if (statusCode == 403)
                 {
@@ -43,9 +44,12 @@ namespace MallApi.middleware
                  {
                      ResultCode = code,
                      Message = msg,
+                 }, new   JsonSerializerSettings
+                 {
+                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                  });
                     context.Response.ContentType = "application/json;charset=utf-8";
-
+                    context.Response.StatusCode = 200;
                     await context.Response.WriteAsync(result);
                 }
             }

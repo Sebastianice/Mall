@@ -1,4 +1,6 @@
-﻿using MallDomain.entity.common.response;
+﻿using MallDomain.entity.common.request;
+using MallDomain.entity.common.response;
+using MallDomain.entity.mannage;
 using MallDomain.service.manage;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Crypto;
@@ -43,11 +45,19 @@ namespace MallApi.Controllers.mannage
 
         }
         [HttpGet("orders")]
-        public async Task<Result> GetMallOrderList()
+        public async Task<Result> GetMallOrderList([FromQuery] PageInfo info, [FromQuery] string? orderNo = "", [FromQuery] string? orderStatus = "")
         {
+            var (list, total) = await orderService.GetMallOrderInfoList(info, orderNo, orderStatus);
+            return Result.OkWithDetailed(new PageResult()
+            {
+                List = list,
+                CurrPage = info.PageNumber,
+                TotalCount = total,
+                PageSize = info.PageSize,
+                TotalPage = (int)Math.Ceiling((double)total / info.PageSize)
 
-            ///TODO
-            return Result.Ok();
+            }, "获取成功");
+
         }
     }
 }
