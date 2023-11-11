@@ -34,15 +34,15 @@ namespace MallInfrastructure.service.mannage
         }
 
         // LockUser 修改用户状态
-        public async Task LockUser(List<long> ids,sbyte lockStatus)
+        public async Task LockUser(List<long> ids, sbyte lockStatus)
         {
             //使用ef core批量操作新特性
-           await context.Users
-                .Where(u=>ids.Contains(u.UserId))
-                .ExecuteUpdateAsync
-                (s => s.SetProperty
-                       (p=>p.LockedFlag, lockStatus));
-     
+            await context.Users
+                 .Where(u => ids.Contains(u.UserId))
+                 .ExecuteUpdateAsync
+                 (s => s.SetProperty
+                        (p => p.LockedFlag, lockStatus));
+
         }
     }
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using LinqKit;
+﻿using LinqKit;
 using MallDomain.entity.common.request;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Org.BouncyCastle.Ocsp;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MallInfrastructure.service.mannage
 {
@@ -36,10 +32,10 @@ namespace MallInfrastructure.service.mannage
 
             var indexconfig = new IndexConfig()
             {
-                ConfigName = req.ConfigName,
+                ConfigName = req.ConfigName ?? "",
                 ConfigType = req.ConfigType,
                 GoodsId = req.GoodsId,
-                RedirectUrl = req.RedirectUrl,
+                RedirectUrl = req.RedirectUrl ?? "",
                 CreateTime = DateTime.Now,
                 UpdateTime = DateTime.Now,
 
@@ -64,17 +60,17 @@ namespace MallInfrastructure.service.mannage
                 ?? throw new Exception("获取首页配置失败");
         }
 
-        public async Task<(List<IndexConfig>,long)> GetMallIndexConfigInfoList(PageInfo info, sbyte configType)
+        public async Task<(List<IndexConfig>, long)> GetMallIndexConfigInfoList(PageInfo info, sbyte configType)
         {
             var limit = info.PageSize;
 
             var offset = limit * (info.PageNumber - 1);
             var predicate = PredicateBuilder.New<IndexConfig>(true);
             var query = context.IndexConfigs.AsQueryable();
-            if (new List<int>() { 1, 2, 3 ,4,5}.Contains(configType))
-                query= query.Where(i => i.ConfigType == configType);
+            if (new List<int>() { 1, 2, 3, 4, 5 }.Contains(configType))
+                query = query.Where(i => i.ConfigType == configType);
 
-            var count =await query.CountAsync();
+            var count = await query.CountAsync();
 
             var list = await query
                                   .Skip(offset)
@@ -111,8 +107,8 @@ namespace MallInfrastructure.service.mannage
             {
                 ConfigId = req.ConfigId,
                 ConfigType = req.ConfigType,
-                ConfigName = req.ConfigName,
-                RedirectUrl = req.RedirectUrl,
+                ConfigName = req.ConfigName ?? "",
+                RedirectUrl = req.RedirectUrl ?? "",
                 GoodsId = req.GoodsId,
                 ConfigRank = req.ConfigRank,
                 UpdateTime = DateTime.Now
@@ -120,7 +116,7 @@ namespace MallInfrastructure.service.mannage
 
             context.IndexConfigs.Add(indexConfig);
             await context.SaveChangesAsync();
-            
+
         }
     }
 }

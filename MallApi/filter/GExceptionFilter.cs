@@ -21,7 +21,7 @@ namespace MallApi.filter
             if (!context.ExceptionHandled)
             {
 
-               
+
                 context.Result = new ContentResult()
                 {
                     StatusCode = 200,
@@ -34,15 +34,15 @@ namespace MallApi.filter
                    {
                        ContractResolver = new CamelCasePropertyNamesContractResolver()
                    })
-            };
+                };
 
 
 
-            logger.LogDebug(context.Exception, context.Exception.Message);
-            context.ExceptionHandled = true;
+                logger.LogDebug(context.Exception, context.Exception.Message);
+                context.ExceptionHandled = true;
 
-        }
+            }
             return Task.CompletedTask;
         }
-}
+    }
 }

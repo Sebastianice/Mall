@@ -1,22 +1,18 @@
-﻿using System.Text;
-using MallDomain.entity.common.enums;
+﻿using MallDomain.entity.common.enums;
 using MallDomain.entity.common.request;
 using MallDomain.entity.common.response;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
-using MallDomain.utils;
 using MallDomain.utils.validator;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Org.BouncyCastle.Crypto;
 
 namespace MallApi.Controllers.mannage
 {
 
     [Route("manage-api/v1")]
     [ApiController]
-    public class ManageGoodsCategoryController:ControllerBase
+    public class ManageGoodsCategoryController : ControllerBase
     {
         private readonly IManageGoodsCategoryService manageGoodsCategoryService;
 
@@ -52,20 +48,20 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithMessage("更新成功");
         }
         [HttpGet("categories")]
-        public async Task<Result> GetCategoryList([FromQuery]PageInfo info,int categoryLevel, int parentId)
+        public async Task<Result> GetCategoryList([FromQuery] PageInfo info, int categoryLevel, int parentId)
         {
-            var (list, total) = await manageGoodsCategoryService.SelectCategoryPage( info, categoryLevel, parentId);
+            var (list, total) = await manageGoodsCategoryService.SelectCategoryPage(info, categoryLevel, parentId);
             return Result.OkWithDetailed(new PageResult()
             {
                 List = list,
                 CurrPage = info.PageNumber,
                 TotalCount = total,
                 PageSize = info.PageSize,
-                 TotalPage = (int)Math.Ceiling((double)total / info.PageSize)
+                TotalPage = (int)Math.Ceiling((double)total / info.PageSize)
             }, "获取成功");
 
         }
-        
+
         [HttpGet("categories/{id}")]
         public async Task<Result> GetCategory(long id)
         {
@@ -73,20 +69,20 @@ namespace MallApi.Controllers.mannage
 
             return Result.OkWithData(cg);
         }
-  
+
         [HttpDelete("categories")]
-        
-        public async Task<Result> DelCategory([FromBody]IdsReq ids)
-        {          
-            
+
+        public async Task<Result> DelCategory([FromBody] IdsReq ids)
+        {
+
             // DelCategory 设置分类失效
-          
-                await manageGoodsCategoryService.DeleteGoodsCategoriesByIds(ids.Ids);
-  
+
+            await manageGoodsCategoryService.DeleteGoodsCategoriesByIds(ids.Ids);
+
 
             return Result.OkWithMessage("删除成功");
         }
-    
+
         [HttpGet("categories4Select")]
         public async Task<Result> ListForSelect([FromQuery] long id)
         {
@@ -105,7 +101,7 @@ namespace MallApi.Controllers.mannage
             if (level == GoodsCategoryLevel.LevelOne.Code())
             {
                 var levelTwoList = await manageGoodsCategoryService.SelectByLevelAndParentIdsAndNumber(id, GoodsCategoryLevel.LevelTwo.Code());
-              
+
 
 
                 if (levelTwoList.Count > 0)
@@ -125,5 +121,5 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithData(categoryResult);
         }
     }
-   
+
 }

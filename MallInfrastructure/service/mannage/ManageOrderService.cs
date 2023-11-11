@@ -1,5 +1,4 @@
-﻿using LinqKit;
-using MallDomain.entity.common.enums;
+﻿using MallDomain.entity.common.enums;
 using MallDomain.entity.common.request;
 
 using MallDomain.entity.mannage;
@@ -27,16 +26,16 @@ namespace MallInfrastructure.service.mannage
                  .ToListAsync();
             if (orders.Count() == 0) throw new Exception("未查询到订单");
 
-            //订单存在未支付
-            bool flag = false;
+
 
             foreach (var order in orders)
             {
-                if (order.OrderStatus == OrderStatusEnum.ORDER_PAID.Code())
-                    flag = true;
+                //订单存在未支付
+                if (order.OrderStatus == OrderStatusEnum.ORDER_PRE_PAY.Code())
+                    throw new Exception("存在未支付订单，不能配货");
             }
 
-            if (flag) throw new Exception("存在未支付订单，不能配货");
+
 
 
 
@@ -60,16 +59,16 @@ namespace MallInfrastructure.service.mannage
 
 
             //订单存在未支付
-            bool flag = false;
+
 
             foreach (var order in orders)
             {
                 if (order.OrderStatus == OrderStatusEnum.ORDER_PAID.Code())
                     if (order.OrderStatus == OrderStatusEnum.ORDER_PACKAGED.Code())
-                        flag = true;
+                        throw new Exception("未支付或未配货状态，不能出库");
             }
 
-            if (flag) throw new Exception("未支付或未配货状态，不能出库");
+
 
 
 
@@ -81,9 +80,39 @@ namespace MallInfrastructure.service.mannage
         }
 
 
-        public Task CloseOrder(List<long> ids)
+        public async Task CloseOrder(List<long> ids)
         {
-            throw new NotImplementedException();
+            var orders = await context.Orders
+                 .Where(w => ids.Contains(w.OrderId))
+                 .ToListAsync();
+            if (orders.Count() == 0) throw new Exception("未查询到订单");
+
+
+
+
+
+
+            //订单存在已支付支付 未出库 未配货
+            foreach (var order in orders)
+            {
+                //如果已支付
+                if (order.OrderStatus == OrderStatusEnum.ORDER_PAID.Code())
+
+                {
+                    //已经配货 不能关闭
+                    if (order.OrderStatus == OrderStatusEnum.ORDER_PACKAGED.Code())
+                    {
+                        throw new Exception("订单已支付未出库，不能关闭");
+                    }
+
+                }
+            }
+
+            await context.Orders
+           .Where(i => ids.Contains(i.OrderId))
+           .ExecuteUpdateAsync(s => s
+           .SetProperty(p => p.OrderStatus, -3)
+           .SetProperty(p => p.UpdateTime, DateTime.Now));
         }
 
         public async Task<NewBeeMallOrderDetailVO> GetMallOrder(long id)
@@ -112,7 +141,7 @@ namespace MallInfrastructure.service.mannage
             return newBeeMallOrderDetailVO;
         }
 
-        public async Task<(List<Order>, long)> GetMallOrderInfoList(PageInfo info, string orderNo, string orderStatus)
+        public async Task<(List<Order>, long)> GetMallOrderInfoList(PageInfo info, string? orderNo, string? orderStatus)
         {
             var limit = info.PageSize;
             var offset = limit * (info.PageNumber - 1);
@@ -131,8 +160,8 @@ namespace MallInfrastructure.service.mannage
                 query = query.Where(w => w.OrderStatus == status);
             }
 
-            
-                              
+
+
 
             var count = await query.CountAsync();
 

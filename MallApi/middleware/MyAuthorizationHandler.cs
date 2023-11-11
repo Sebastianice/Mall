@@ -1,11 +1,6 @@
-﻿
-using System.IdentityModel.Tokens.Jwt;
-using IdentityModel;
-using MallDomain.entity.mall;
-using MallInfrastructure;
+﻿using MallInfrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace MallApi.middleware
 {
@@ -41,7 +36,7 @@ namespace MallApi.middleware
                         return;
                     }
 
-             
+
                 }
             }
             else if (context.User.IsInRole("User"))

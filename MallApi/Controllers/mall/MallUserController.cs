@@ -26,9 +26,9 @@ namespace MallApi.Controllers.mall
         [HttpPut("user/info")]
         public async Task<Result> UserInfoUpdate([FromBody] UpdateUserInfoParam up)
         {
-            var token = Request.Headers["Authorization"];
+            var token = Request.Headers["Authorization"]!;
 
-            await mallUserService.UpdateUserInfo(token, up);
+            await mallUserService.UpdateUserInfo(token!, up);
 
             return Result.OkWithMessage("更新用户数据成功");
         }
@@ -37,9 +37,9 @@ namespace MallApi.Controllers.mall
         [HttpGet("user/info")]
         public async Task<Result> GetUserInfo()
         {
-            var token = Request.Headers["Authorization"];
+            var token = Request.Headers["Authorization"]!;
 
-            var rep = await mallUserService.GetUserDetail(token);
+            var rep = await mallUserService.GetUserDetail(token!);
 
 
             return Result.OkWithData(rep);

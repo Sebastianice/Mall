@@ -21,6 +21,6 @@ namespace MallDomain.service.mall
         public Task<MallOrderDetailVO> GetOrderDetailByOrderNo(string token, string orderNo);
 
         // MallOrderListBySearch 搜索订单
-        public Task<(List<MallOrderResponse> list, long total)> MallOrderListBySearch(string token, int pageNumber, string status);
+        public Task<(List<MallOrderResponse> list, long total)> MallOrderListBySearch(string token, int pageNumber, string? status);
     }
 }

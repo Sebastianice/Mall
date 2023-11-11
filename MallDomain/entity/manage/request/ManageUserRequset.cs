@@ -5,7 +5,7 @@ namespace MallDomain.entity.mannage.request
 {
     public class UserSearch
     {
-        public User MallUser { get; set; }
-        public PageInfo PageInfo { get; set; }
+        public User? MallUser { get; set; }
+        public PageInfo? PageInfo { get; set; }
     }
 }

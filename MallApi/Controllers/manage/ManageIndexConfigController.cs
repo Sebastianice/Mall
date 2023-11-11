@@ -1,10 +1,8 @@
 ﻿using MallDomain.entity.common.request;
 using MallDomain.entity.common.response;
-using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
 using MallDomain.utils.validator;
-using MallInfrastructure.service.mannage;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MallApi.Controllers.mannage
@@ -34,12 +32,12 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithMessage("创建成功");
         }
 
-        [HttpPost("indexConfigs/delete")]
-        public async Task<Result> DeleteIndexConfig([FromBody]IdsReq ids)
+        [HttpDelete("indexConfigs")]
+        public async Task<Result> DeleteIndexConfig([FromBody] IdsReq ids)
         {
             await indexConfigService.DeleteMallIndexConfig(ids.Ids);
 
-             return Result.OkWithMessage("删除成功");
+            return Result.OkWithMessage("删除成功");
         }
         [HttpPut("indexConfigs")]
         public async Task<Result> UpdateIndexConfig([FromBody] IndexConfigUpdateParams req)
@@ -63,18 +61,18 @@ namespace MallApi.Controllers.mannage
 
 
         [HttpGet("indexConfigs")]
-        public async Task<Result> GetIndexConfigList([FromQuery] PageInfo info,[FromQuery] sbyte configType)
+        public async Task<Result> GetIndexConfigList([FromQuery] PageInfo info, [FromQuery] sbyte configType)
         {
-            var (list, total) = await indexConfigService.GetMallIndexConfigInfoList(info,  configType);
+            var (list, total) = await indexConfigService.GetMallIndexConfigInfoList(info, configType);
 
-             return Result.OkWithDetailed(new PageResult()
-             {
-                 List = list,
-                 CurrPage = info.PageNumber,
-                 TotalCount = total,
-                 PageSize = info.PageSize,
-                  TotalPage = (int)Math.Ceiling((double)total / info.PageSize)
-             }, "获取成功");
+            return Result.OkWithDetailed(new PageResult()
+            {
+                List = list,
+                CurrPage = info.PageNumber,
+                TotalCount = total,
+                PageSize = info.PageSize,
+                TotalPage = (int)Math.Ceiling((double)total / info.PageSize)
+            }, "获取成功");
         }
     }
 }

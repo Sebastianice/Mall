@@ -23,29 +23,29 @@ namespace MallApi.Controllers.mall
         [HttpGet("address/{addressId}")]
         public async Task<Result> GetMallUserAddress(long addressId)
         {
-            var token = Request.Headers["Authorization"];
-            var adrress = await mallUserAddressService.GetMallUserAddressById(token, addressId);
+            var token = Request.Headers["Authorization"]!;
+            var adrress = await mallUserAddressService.GetMallUserAddressById(token!, addressId);
             return Result.OkWithData(adrress);
         }
         [HttpPost("address")]
         public async Task<Result> SaveUserAddress([FromBody] AddAddressParam req)
         {
-            var token = Request.Headers["Authorization"];
-            await mallUserAddressService.SaveUserAddress(token, req);
+            var token = Request.Headers["Authorization"]!;
+            await mallUserAddressService.SaveUserAddress(token!, req);
             return Result.OkWithMessage("保存地址成功");
         }
         [HttpPut("address")]
         public async Task<Result> UpdateMallUserAddress([FromBody] UpdateAddressParam req)
         {
-            var token = Request.Headers["Authorization"];
-            await mallUserAddressService.UpdateUserAddress(token, req);
+            var token = Request.Headers["Authorization"]!;
+            await mallUserAddressService.UpdateUserAddress(token!, req);
             return Result.OkWithMessage("更新地址成功");
         }
         [HttpGet("address")]
         public async Task<Result> AddressList()
         {
-            var token = Request.Headers["Authorization"];
-            var addressList = await mallUserAddressService.GetMyAddress(token);
+            var token = Request.Headers["Authorization"]!;
+            var addressList = await mallUserAddressService.GetMyAddress(token!);
 
             return Result.OkWithData(addressList);
         }
@@ -54,8 +54,8 @@ namespace MallApi.Controllers.mall
         [HttpGet("address/default")]
         public async Task<Result> GetMallUserDefaultAddress()
         {
-            var token = Request.Headers["Authorization"];
-            UserAddress address = await mallUserAddressService.GetMallUserDefaultAddress(token);
+            var token = Request.Headers["Authorization"]!;
+            UserAddress address = await mallUserAddressService.GetMallUserDefaultAddress(token!);
 
             return Result.OkWithData(address);
         }
@@ -63,8 +63,8 @@ namespace MallApi.Controllers.mall
         public async Task<Result> DeleteUserAddress(long addressId)
         {
 
-            var token = Request.Headers["Authorization"];
-            await mallUserAddressService.DeleteUserAddress(token, addressId);
+            var token = Request.Headers["Authorization"]!;
+            await mallUserAddressService.DeleteUserAddress(token!, addressId);
             return Result.OkWithMessage("删除成功");
         }
     }

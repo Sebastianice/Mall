@@ -1,9 +1,7 @@
 ﻿using MallDomain.entity.common.request;
 using MallDomain.entity.common.response;
-using MallDomain.entity.mannage;
 using MallDomain.service.manage;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Crypto;
 
 namespace MallApi.Controllers.mannage
 {
@@ -19,21 +17,21 @@ namespace MallApi.Controllers.mannage
         }
 
         [HttpPut("orders/checkDone")]
-        public async Task<Result> CheckDoneOrder([FromBody] List<long> ids)
+        public async Task<Result> CheckDoneOrder([FromBody] IdsReq ids)
         {
-            await orderService.Ch_eckDone(ids);
+            await orderService.Ch_eckDone(ids.Ids);
             return Result.OkWithMessage("更新成功");
         }
         [HttpPut("orders/checkOut")]
-        public async Task<Result> CheckOutOrder([FromBody] List<long> ids)
+        public async Task<Result> CheckOutOrder([FromBody] IdsReq ids)
         {
-            await orderService.CheckOut(ids);
+            await orderService.CheckOut(ids.Ids);
             return Result.OkWithMessage("更新成功");
         }
         [HttpPut("orders/close")]
-        public async Task<Result> CloseOrder([FromBody] List<long> ids)
+        public async Task<Result> CloseOrder([FromBody] IdsReq ids)
         {
-            await orderService.CloseOrder(ids);
+            await orderService.CloseOrder(ids.Ids);
             return Result.OkWithMessage("更新成功");
 
         }

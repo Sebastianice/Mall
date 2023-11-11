@@ -19,6 +19,6 @@ namespace MallDomain.service.manage
         public Task<IndexConfig> GetMallIndexConfig(long id);
 
         // GetMallIndexConfigInfoList 分页获取MallIndexConfig记录
-        public Task<(List<IndexConfig>,long)> GetMallIndexConfigInfoList(PageInfo info, sbyte configType);
+        public Task<(List<IndexConfig>, long)> GetMallIndexConfigInfoList(PageInfo info, sbyte configType);
     }
 }
