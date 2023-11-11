@@ -90,7 +90,7 @@ builder.Services.AddCors(o =>
        .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
-       
+
 
     });
 });
@@ -171,7 +171,7 @@ builder.Services.AddDbContext<MallContext>(p =>
     p.UseExceptionProcessor();
     p.EnableSensitiveDataLogging();
     p.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
-  
+
 });
 
 

@@ -5,7 +5,6 @@ using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
 using MallDomain.utils.validator;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Ocsp;
 
 namespace MallApi.Controllers.mannage
 {
@@ -40,7 +39,7 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithMessage("删除成功");
         }
         [HttpPut("goods/status/{status}")]
-        public async Task<Result> ChangeGoodsInfoByIds([FromBody]IdsReq ids, [FromQuery] string status)
+        public async Task<Result> ChangeGoodsInfoByIds([FromBody] IdsReq ids, [FromQuery] string status)
         {
             await manageGoodsInfoService.ChangeMallGoodsInfoByIds(ids.Ids, status);
             return Result.OkWithMessage("修改商品状态成功");
@@ -77,7 +76,7 @@ namespace MallApi.Controllers.mannage
                 CurrPage = pageInfo.PageNumber,
                 TotalCount = total,
                 PageSize = pageInfo.PageSize,
-                 TotalPage = (int)Math.Ceiling((double)total / pageInfo.PageSize)
+                TotalPage = (int)Math.Ceiling((double)total / pageInfo.PageSize)
             }, "获取成功");
         }
     }

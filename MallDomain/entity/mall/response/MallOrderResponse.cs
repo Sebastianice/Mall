@@ -13,6 +13,6 @@
         public string? OrderStatusString { get; set; }
         public DateTime CreateTime { get; set; }
 
-        public List<NewBeeMallOrderItemVO> NewBeeMallOrderItemVOS { get; set; }
+        public List<NewBeeMallOrderItemVO>? NewBeeMallOrderItemVOS { get; set; } = new();
     }
 }

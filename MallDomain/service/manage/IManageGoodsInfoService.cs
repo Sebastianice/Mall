@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MallDomain.entity.common.request;
+﻿using MallDomain.entity.common.request;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 

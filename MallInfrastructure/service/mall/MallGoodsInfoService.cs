@@ -39,7 +39,7 @@ namespace MallInfrastructure.service.mall
             return gd;
         }
 
-        public async Task<(List<GoodsSearchResponse>, long)> MallGoodsListBySearch(int pageNumber, int goodsCategoryId, string keyword, string orderBy)
+        public async Task<(List<GoodsSearchResponse>, long)> MallGoodsListBySearch(int pageNumber, int goodsCategoryId, string? keyword, string? orderBy)
         {
             var searchList = new List<GoodsSearchResponse>();
 
@@ -50,9 +50,9 @@ namespace MallInfrastructure.service.mall
                 predicate = predicate.And(p =>
                 EF.Functions.Like(p.GoodsName!, $"%{keyword}%")
                 || EF.Functions.Like(p.GoodsIntro!, $"%{keyword}%"));
-              
 
-                
+
+
             }
 
             if (goodsCategoryId >= 0)
@@ -60,13 +60,13 @@ namespace MallInfrastructure.service.mall
                 predicate = predicate.And(q => q.GoodsCategoryId == goodsCategoryId);
             }
 
-            int count =await query
+            int count = await query
                 .AsExpandable()
                 .Where(predicate)
                 .CountAsync();
 
             if (count == 0) throw new Exception("查询失败，未查到数据");
-           
+
             switch (orderBy)
             {
                 case "new":
@@ -75,7 +75,7 @@ namespace MallInfrastructure.service.mall
                 case "price":
                     query = query.OrderBy(q => q.SellingPrice);
                     break;
-              
+
                 default:
                     query = query.OrderByDescending(q => q.StockNum);
                     break;
@@ -92,8 +92,8 @@ namespace MallInfrastructure.service.mall
             var list = await query
                 .AsExpandable()
                 .Where(predicate)
-               . Skip(offset)
-               . Take(limit)
+               .Skip(offset)
+               .Take(limit)
                .ToListAsync();
 
             foreach (var item in list)

@@ -145,7 +145,7 @@ namespace MallInfrastructure.service.mall
 
         async Task<List<GoodsCategory>> selectByLevelAndParentIdsAndNumber(List<long> ids, int level, int limit)
         {
-           
+
             if (limit != 0)
             {
                 return await context.GoodsCategories
@@ -156,7 +156,10 @@ namespace MallInfrastructure.service.mall
                .ToListAsync();
             }
             return await context.GoodsCategories
-              .Where(p => ids.Contains(p.ParentId) && p.CategoryLevel == level)
+              .Where(p =>
+              ids.Contains(p.ParentId)
+              &&
+              p.CategoryLevel == level)
               .OrderByDescending(p => p.CategoryRank)
               .AsNoTracking()
               .ToListAsync();

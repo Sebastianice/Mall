@@ -3,7 +3,6 @@ using MallDomain.entity.common.request;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace MallInfrastructure.service.mannage
@@ -80,7 +79,7 @@ namespace MallInfrastructure.service.mannage
             if (parentId >= 0)
                 query = query.Where(i => i.ParentId == parentId);
 
-            int total =await query.CountAsync();
+            int total = await query.CountAsync();
 
             var list = query.AsNoTracking()
                             .Skip(offset)
@@ -97,7 +96,7 @@ namespace MallInfrastructure.service.mannage
                   .SingleOrDefaultAsync(w =>
                   w.CategoryLevel == req.CategoryLevel
                   &&
-                  w.CategoryId==req.CategoryId);
+                  w.CategoryId == req.CategoryId);
 
             if (goodsCategory == null) throw new Exception("不存存在分类");
 

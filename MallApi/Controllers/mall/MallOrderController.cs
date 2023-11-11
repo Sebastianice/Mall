@@ -37,16 +37,16 @@ namespace MallApi.Controllers.mall
                 return Result.FailWithMessage(vResult.Errors.ToString()!);
             }
 
-            var token = Request.Headers["Authorization"];
-            var list = await mallShopCartService.GetCartItemsForSettle(token, saverOrderParam.CartItemIds!);
+            var token = Request.Headers["Authorization"]!;
+            var list = await mallShopCartService.GetCartItemsForSettle(token!, saverOrderParam.CartItemIds!);
 
             if (list.Count == 0)
             {
                 return Result.FailWithMessage("无数据");
             }
 
-            var userAddress = await mallUserAddressService.GetMallUserDefaultAddress(token);
-            var orderNo = await mallOrderService.SaveOrder(token, userAddress, list);
+            var userAddress = await mallUserAddressService.GetMallUserDefaultAddress(token!);
+            var orderNo = await mallOrderService.SaveOrder(token!, userAddress, list);
 
             return Result.OkWithData(orderNo);
         }
@@ -61,8 +61,8 @@ namespace MallApi.Controllers.mall
         [HttpPut("order/{orderNo}/finish")]
         public async Task<Result> FinishOrder(string orderNo)
         {
-            var token = Request.Headers["Authorization"];
-            await mallOrderService.FinishOrder(token, orderNo);
+            var token = Request.Headers["Authorization"]!;
+            await mallOrderService.FinishOrder(token!, orderNo);
             return Result.OkWithMessage("订单完成");
         }
 
@@ -70,28 +70,28 @@ namespace MallApi.Controllers.mall
         [HttpPut("order/{orderNo}/cancel")]
         public async Task<Result> CancelOrder(string orderNo)
         {
-            var token = Request.Headers["Authorization"];
-            await mallOrderService.CancelOrder(token, orderNo);
+            var token = Request.Headers["Authorization"]!;
+            await mallOrderService.CancelOrder(token!, orderNo);
             return Result.OkWithMessage("订单取消成功");
         }
         [HttpGet("order/{orderNo}")]
         public async Task<Result> OrderDetailPage(string orderNo)
         {
-            var token = Request.Headers["Authorization"];
-            var detail = await mallOrderService.GetOrderDetailByOrderNo(token, orderNo);
+            var token = Request.Headers["Authorization"]!;
+            var detail = await mallOrderService.GetOrderDetailByOrderNo(token!, orderNo);
             return Result.OkWithData(detail);
 
         }
         [HttpGet("order")]
-        public async Task<Result> OrderList( [FromQuery] int pageNumber, [FromQuery] string? status="")
+        public async Task<Result> OrderList([FromQuery] int pageNumber, [FromQuery] string? status = "")
         {
-            var token = Request.Headers["Authorization"];
+            var token = Request.Headers["Authorization"]!;
             if (pageNumber <= 0)
             {
                 pageNumber = 1;
             }
 
-            var (list, total) = await mallOrderService.MallOrderListBySearch(token, pageNumber, status);
+            var (list, total) = await mallOrderService.MallOrderListBySearch(token!, pageNumber, status);
 
             return Result.OkWithData(new PageResult()
             {

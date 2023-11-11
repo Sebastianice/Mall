@@ -3,9 +3,9 @@ using MallDomain.entity.mannage.request;
 
 namespace MallDomain.utils.validator
 {
-    internal class GoodsInfoUpdateParamValidator:AbstractValidator<GoodsInfoUpdateParam>
+    internal class GoodsInfoUpdateParamValidator : AbstractValidator<GoodsInfoUpdateParam>
     {
-       public GoodsInfoUpdateParamValidator()
+        public GoodsInfoUpdateParamValidator()
         {
             RuleFor(r => r.GoodsName)
                 .Length(50)

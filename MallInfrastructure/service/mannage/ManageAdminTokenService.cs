@@ -1,6 +1,5 @@
 ﻿using MallDomain.service.mannage;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace MallInfrastructure.service.mannage
 {
@@ -12,7 +11,7 @@ namespace MallInfrastructure.service.mannage
         public ManageAdminTokenService(MallContext context)
         {
             this.context = context;
-          
+
         }
 
         public async Task DeleteMallAdminUserToken(string token)
@@ -24,7 +23,7 @@ namespace MallInfrastructure.service.mannage
 
             if (adminToken == null) throw new Exception("未查询到记录");
 
-     
+
             context.AdminUserTokens.Remove(adminToken);
             await context.SaveChangesAsync();
         }

@@ -35,7 +35,7 @@
             :action="state.uploadImgServer"
             accept="jpg,jpeg,png"
             :headers="{
-              token: state.token
+              Authorization: state.token
             }"
             :show-file-list="false"
             :before-upload="handleBeforeUpload"

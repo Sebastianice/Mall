@@ -58,7 +58,7 @@ namespace MallInfrastructure.service.mall
             if (mu is null)
             {
                 User user = new();
-                user.LoginName = req.LoginName;
+                user.LoginName = req.LoginName ?? user.LoginName;
 
                 user.PasswordMd5 = req.Password.GetMD5();
                 context.Users.Add(user);
@@ -150,7 +150,7 @@ namespace MallInfrastructure.service.mall
             {
                 oldtoken = new UserToken
                 {
-                    UserId=user.UserId,
+                    UserId = user.UserId,
                     ExpireTime = exp,
                     Token = token,
                     UpdateTime = nbf,

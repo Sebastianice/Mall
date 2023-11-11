@@ -89,12 +89,12 @@ namespace MallInfrastructure.service.mall
             {
                 throw new Exception("不存在的用户");
             }
-            if (req.DefaultFlag==1)
+            if (req.DefaultFlag == 1)
             {
                 var oldAddress = await context.UserAddresses.SingleOrDefaultAsync(u => userToken.UserId == userToken.UserId && u.DefaultFlag == 0);
                 if (oldAddress is not null)
                 {
-                    
+
                     oldAddress.DefaultFlag = 0;
                 }
             }

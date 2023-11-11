@@ -45,9 +45,18 @@ namespace MallDomain.utils.validator
             else if (obj is GoodsInfoUpdateParam)
             {
                 return new GoodsInfoUpdateParamValidator() as IValidator<T>;
-            } else if (obj is IndexConfigAddParams)
+            }
+            else if (obj is IndexConfigAddParams)
             {
                 return new IndexConfigAddParamsValidator() as IValidator<T>;
+            }
+            else if (obj is CarouselAddParam)
+            {
+                return new CarouselAddParamValidator() as IValidator<T>;
+            }
+            else if (obj is GoodsInfoAddParam)
+            {
+                return new GoodsInfoAddParamValidator() as IValidator<T>;
             }
             else
             {

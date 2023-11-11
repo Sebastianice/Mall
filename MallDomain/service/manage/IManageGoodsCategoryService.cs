@@ -10,8 +10,8 @@ namespace MallDomain.service.manage
 
         public Task UpdateCategory(GoodsCategoryReq req);
 
-        public Task<(List<GoodsCategory>,int)> SelectCategoryPage(PageInfo info,int categoryLevel,int parentId);
-     
+        public Task<(List<GoodsCategory>, int)> SelectCategoryPage(PageInfo info, int categoryLevel, int parentId);
+
         // SelectCategoryById 获取单个分类数据
         public Task<GoodsCategory> SelectCategoryById(long categoryId);
 

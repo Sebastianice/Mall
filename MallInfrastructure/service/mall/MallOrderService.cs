@@ -89,7 +89,7 @@ namespace MallInfrastructure.service.mall
             return detail;
         }
 
-        public async Task<(List<MallOrderResponse> list, long total)> MallOrderListBySearch(string token, int pageNumber, string status)
+        public async Task<(List<MallOrderResponse> list, long total)> MallOrderListBySearch(string token, int pageNumber, string? status)
         {
             var userToken = await mallContext.UserTokens.Where(p => p.Token == token).SingleOrDefaultAsync();
             if (userToken == null)
@@ -144,8 +144,8 @@ namespace MallInfrastructure.service.mall
                     foreach (var or in orderResp)
                     {
                         if (or.OrderId == item.OrderId)
-                            or.NewBeeMallOrderItemVOS
-                                . Add(item.Adapt<NewBeeMallOrderItemVO>());
+                            or.NewBeeMallOrderItemVOS!
+                                .Add(item.Adapt<NewBeeMallOrderItemVO>());
                     }
                 }
 

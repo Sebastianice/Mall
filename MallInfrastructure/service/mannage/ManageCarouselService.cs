@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MallDomain.entity.common.request;
+﻿using MallDomain.entity.common.request;
 using MallDomain.entity.mannage;
 using MallDomain.entity.mannage.request;
 using MallDomain.service.manage;
@@ -80,8 +75,8 @@ namespace MallInfrastructure.service.mannage
 
             if (carouserl is null) throw new Exception("轮播图不存在，无法更新");
 
-            carouserl.CarouselRank = req.CarouselRank?? carouserl.CarouselRank;
-            carouserl.CarouselUrl = req.CarouselUrl?? carouserl.CarouselUrl;
+            carouserl.CarouselRank = req.CarouselRank ?? carouserl.CarouselRank;
+            carouserl.CarouselUrl = req.CarouselUrl ?? carouserl.CarouselUrl;
             carouserl.RedirectUrl = req.RedirectUrl ?? carouserl.RedirectUrl;
 
             await context.SaveChangesAsync();

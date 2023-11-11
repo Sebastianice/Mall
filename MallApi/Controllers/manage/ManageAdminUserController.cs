@@ -23,7 +23,7 @@ namespace MallApi.Controllers.mannage
         private readonly IManageUserService manageUserService;
         private readonly IWebHostEnvironment _environment;
 
-       
+
         public ManageAdminUserController(IManageAdminUserService manageAdminUserService, IManageAdminTokenService mnanageAdminTokenService, IManageUserService manageUserService, IWebHostEnvironment environment)
         {
             this.manageAdminUserService = manageAdminUserService;
@@ -62,7 +62,7 @@ namespace MallApi.Controllers.mannage
         public async Task<Result> UpdateAdminUserName([FromBody] UpdateNameParam req)
         {
 
-            var token = Request.Headers["Authorization"];
+            var token = Request.Headers["Authorization"]!;
             var v = await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req!);
 
             if (!v.IsValid)
@@ -70,7 +70,7 @@ namespace MallApi.Controllers.mannage
                 string msg = string.Join(";", v.Errors.Select(w => w.ErrorMessage));
                 return Result.FailWithMessage(msg);
             }
-            await manageAdminUserService.UpdateMallAdminName(token, req);
+            await manageAdminUserService.UpdateMallAdminName(token!, req);
 
             return Result.OkWithMessage("更新用户名昵称成功");
         }
@@ -79,7 +79,7 @@ namespace MallApi.Controllers.mannage
         [HttpPut("adminUser/password")]
         public async Task<Result> UpdateAdminUserPassword([FromBody] MallUpdatePasswordParam req)
         {
-            var token = Request.Headers["Authorization"];
+            var token = Request.Headers["Authorization"]!;
             var v = await ValidatorFactory.CreateValidator(req)!.ValidateAsync(req!);
 
             if (!v.IsValid)
@@ -87,7 +87,7 @@ namespace MallApi.Controllers.mannage
                 string msg = string.Join(";", v.Errors.Select(w => w.ErrorMessage));
                 return Result.FailWithMessage(msg);
             }
-            await manageAdminUserService.UpdateMallAdminPassWord(token, req);
+            await manageAdminUserService.UpdateMallAdminPassWord(token!, req);
 
             return Result.OkWithMessage("更新用户名昵称成功");
         }
@@ -110,7 +110,7 @@ namespace MallApi.Controllers.mannage
 
 
         [HttpPut("users/{lockStatus}")]
-        public async Task<Result> LockUser([FromBody] IdsReq ids,sbyte lockStatus)
+        public async Task<Result> LockUser([FromBody] IdsReq ids, sbyte lockStatus)
         {
             await manageUserService.LockUser(ids.Ids, lockStatus);
 
@@ -121,7 +121,7 @@ namespace MallApi.Controllers.mannage
         [HttpGet("adminUser/profile")]
         public async Task<Result> AdminUserProfile()
         {
-            var token = Request.Headers["Authorization"];
+            var token = Request.Headers["Authorization"]!;
             var admin = await manageAdminUserService.GetMallAdminUser(token!);
 
             return Result.OkWithData(admin);
@@ -130,40 +130,40 @@ namespace MallApi.Controllers.mannage
         [HttpDelete("logout")]
         public async Task<Result> AdminLogout()
         {
-            var token = Request.Headers["Authorization"];
+            var token = Request.Headers["Authorization"]!;
             await mananageAdminTokenService.DeleteMallAdminUserToken(token!);
             return Result.Ok();
         }
 
 
         [HttpPost("upload/file")]
-        public async Task<Result> UploadFile([FromForm]List<IFormFile> files)
+        public async Task<Result> UploadFile(IFormFile file)
         {
-            long size = files.Sum(f => f.Length);
+            //long size = file.Sum(f => f.Length);
 
-            foreach (var formFile in files)
+
+
+            if (file.Length > 0)
             {
-                if (formFile.Length > 0)
+
+
+                // 生成随机的文件名
+                string fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+                // 获取静态文件夹的物理路径
+                string uploadsFolder = Path.Combine(_environment.ContentRootPath, "staticfiles");
+
+                // 拼接文件的完整路径
+                string filePath = Path.Combine(uploadsFolder, fileName);
+
+                // 将文件保存到静态文件夹
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                   
-
-                    // 生成随机的文件名
-                    string fileName = Path.GetRandomFileName() + Path.GetExtension(formFile.FileName);
-                    // 获取静态文件夹的物理路径
-                    string uploadsFolder = Path.Combine(_environment.ContentRootPath, "staticfiles");
-
-                    // 拼接文件的完整路径
-                    string filePath = Path.Combine(uploadsFolder, fileName);
-
-                    // 将文件保存到静态文件夹
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await formFile.CopyToAsync(fileStream);
-                    }
-                    return Result.OkWithData("http://localhost:5047/staticfiles/"+fileName);
+                    await file.CopyToAsync(fileStream);
                 }
-                     
+                return Result.OkWithData("http://localhost:5047/staticfiles/" + fileName);
             }
+
+
 
             return Result.FailWithMessage("接收文件失败");
 

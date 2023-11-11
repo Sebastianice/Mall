@@ -1,17 +1,16 @@
 ﻿using MallDomain.service.mall;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace MallInfrastructure.service.mall
 {
     public class MallUserTokenService : IMallUserTokenService
     {
         private readonly MallContext context;
-       // private readonly IMemoryCache cache;
+        // private readonly IMemoryCache cache;
 
-        public MallUserTokenService( MallContext context)
+        public MallUserTokenService(MallContext context)
         {
-            
+
             this.context = context;
         }
 
@@ -24,7 +23,7 @@ namespace MallInfrastructure.service.mall
 
             if (userToken == null) throw new Exception("未查询到记录");
 
-         
+
             context.UserTokens.Remove(userToken);
             await context.SaveChangesAsync();
         }

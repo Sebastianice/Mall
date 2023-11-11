@@ -58,7 +58,7 @@ namespace MallApi.Controllers.mannage
             return Result.OkWithData(cas);
         }
         [HttpGet("carousels")]
-        public async Task<Result> GetCarouselList([FromQuery]PageInfo csh)
+        public async Task<Result> GetCarouselList([FromQuery] PageInfo csh)
         {
             var (list, total) = await mallCarouselService.GetCarouselInfoList(csh);
             return Result.OkWithDetailed(new PageResult()
@@ -67,7 +67,7 @@ namespace MallApi.Controllers.mannage
                 CurrPage = csh.PageNumber,
                 TotalCount = total,
                 PageSize = csh.PageSize,
-                 TotalPage = (int)Math.Ceiling((double)total / csh.PageSize)
+                TotalPage = (int)Math.Ceiling((double)total / csh.PageSize)
             }, "获取成功");
 
 

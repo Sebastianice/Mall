@@ -4,8 +4,8 @@ namespace MallDomain.entity.mannage.request
 {
     public class GoodsInfoSearch
     {
-        public PageInfo PageInfo { get; set; }
-        public GoodsInfo MallGoodsInfo { get; set; }
+        public PageInfo? PageInfo { get; set; }
+        public GoodsInfo? MallGoodsInfo { get; set; }
     }
 
 }

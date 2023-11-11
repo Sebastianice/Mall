@@ -1,5 +1,4 @@
 ﻿using MallDomain.entity.common.response;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -21,7 +20,7 @@ namespace MallApi.middleware
             {
                 await next(context);
             }
-            finally  
+            finally
             {
                 var statusCode = context.Response.StatusCode;
                 var msg = "";
@@ -44,7 +43,7 @@ namespace MallApi.middleware
                  {
                      ResultCode = code,
                      Message = msg,
-                 }, new   JsonSerializerSettings
+                 }, new JsonSerializerSettings
                  {
                      ContractResolver = new CamelCasePropertyNamesContractResolver()
                  });
@@ -55,13 +54,13 @@ namespace MallApi.middleware
             }
 
 
-            }
-        }
-        public static class AuthenFailMiddlewareExtensions
-        {
-            public static IApplicationBuilder UseAuthenFailHandling(this IApplicationBuilder builder)
-            {
-                return builder.UseMiddleware<AuthenFailMiddleware>();
-            }
         }
     }
+    public static class AuthenFailMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseAuthenFailHandling(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<AuthenFailMiddleware>();
+        }
+    }
+}
