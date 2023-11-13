@@ -1,0 +1,12 @@
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\bin\Debug\net6.0\Mall.Common.deps.json
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\bin\Debug\net6.0\Mall.Common.dll
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\bin\Debug\net6.0\Mall.Common.pdb
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\Mall.Common.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\Mall.Common.AssemblyInfoInputs.cache
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\Mall.Common.AssemblyInfo.cs
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\Mall.Common.csproj.CoreCompileInputs.cache
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\Mall.Common.dll
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\refint\Mall.Common.dll
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\Mall.Common.pdb
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\ref\Mall.Common.dll
+C:\Users\Sebastian\Desktop\CodeRepo\Mall\Mall.Common\obj\Debug\net6.0\Mall.Common.csproj.AssemblyReference.cache
