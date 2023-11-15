@@ -18,9 +18,8 @@ public static class EfCoreServiceCollectionExtensions
     {
         services.AddDbContext<MallContext>(options =>
         {
-            var v =new Version(8, 0, 1);
 
-            options.UseMySql(connectionString, new MySqlServerVersion(v));
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             
         });
 

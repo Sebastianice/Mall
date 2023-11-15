@@ -27,10 +27,10 @@ namespace Mall.Common.Components.Authonrization
 
             }
 
-          var idClaim=  context.User.Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Id);
+            var idClaim = context.User.Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Id);
 
 
-            if(idClaim == null)
+            if (idClaim == null)
             {
                 context.Fail();
                 return;
@@ -40,18 +40,18 @@ namespace Mall.Common.Components.Authonrization
 
 
             string token = httpContext.Request.Headers["Authorization"]!;
-            
+
             if (context.User.IsInRole("Admin"))
             {
                 if (requirement.Role == "Admin")
                 {
                     var admToken = await dbcontext
                            .AdminUserTokens
-                         
+
                            .SingleOrDefaultAsync(a => a.AdminUserId == id);
 
 
-                    if (admToken != null&&admToken.Token==token)
+                    if (admToken != null && admToken.Token == token)
                     {
                         context.Succeed(requirement);
                         return;
@@ -62,7 +62,7 @@ namespace Mall.Common.Components.Authonrization
             }
             if (context.User.IsInRole("User"))
             {
-               
+
                 if (requirement.Role == "User")
                 {
                     var userToken = await dbcontext
@@ -83,9 +83,6 @@ namespace Mall.Common.Components.Authonrization
 
 
             context.Fail();
-            return;
-
-
         }
     }
 }

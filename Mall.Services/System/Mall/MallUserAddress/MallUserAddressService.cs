@@ -57,7 +57,7 @@ namespace Mall.Services
                 SingleOrDefaultAsync(p => p.Token == token);
             if (userToken == null) throw ResultException.FailWithMessage("不存在的用户");
 
-            var uadress = await context.UserAddresses.Where(p => p.UserId == userToken.UserId && p.DefaultFlag == 0).SingleOrDefaultAsync();
+            var uadress = await context.UserAddresses.Where(p => p.UserId == userToken.UserId && p.DefaultFlag == 1).SingleOrDefaultAsync();
 
             if (uadress is null) throw ResultException.FailWithMessage("该用户没有默认地址,请去设置默认地址");
 
